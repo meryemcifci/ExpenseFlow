@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ExpenseFlow.Data\ExpenseFlow.Data.csproj" />
+    <ProjectReference Include="..\ExpenseFlow.Entity\ExpenseFlow.Entity.csproj" />
+  </ItemGroup>
+
 </Project>

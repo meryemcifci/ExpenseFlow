@@ -10,4 +10,23 @@
     <Folder Include="Controllers\API\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.22">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.22" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.22">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ExpenseFlow.Business\ExpenseFlow.Business.csproj" />
+    <ProjectReference Include="..\ExpenseFlow.Data\ExpenseFlow.Data.csproj" />
+    <ProjectReference Include="..\ExpenseFlow.Entity\ExpenseFlow.Entity.csproj" />
+  </ItemGroup>
+
 </Project>
