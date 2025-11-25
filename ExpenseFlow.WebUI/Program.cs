@@ -1,4 +1,19 @@
+using ExpenseFlow.Data.Context;
+using ExpenseFlow.Entity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// DbContext
+builder.Services.AddDbContext<ExpenseFlowContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddIdentity<AppUser, AppRole>() 
+    .AddEntityFrameworkStores<ExpenseFlowContext>()
+    .AddDefaultTokenProviders();
+
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
