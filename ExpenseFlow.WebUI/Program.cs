@@ -1,3 +1,5 @@
+using ExpenseFlow.Business.Abstract;
+using ExpenseFlow.Business.Services;
 using ExpenseFlow.Data.Context;
 using ExpenseFlow.Entity;
 using Microsoft.AspNetCore.Identity;
@@ -13,12 +15,29 @@ builder.Services.AddIdentity<AppUser, AppRole>()
     .AddEntityFrameworkStores<ExpenseFlowContext>()
     .AddDefaultTokenProviders();
 
+//Servisler
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
+
+    string[] roles = { "Employee", "Manager", "Accountant", "Admin" };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new AppRole { Name = role });
+        }
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
