@@ -22,22 +22,55 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Auth/Login";
+    options.LogoutPath = "/Auth/Logout";
+
+    options.Cookie.Name = "ExpenseFlow.Auth";
+    options.Cookie.HttpOnly = true;
+
+    options.ExpireTimeSpan = TimeSpan.FromDays(7);  // 7 gün hatýrlasýn
+    options.SlidingExpiration = true;               //Her giriþte süre uzasýn
+});
+
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
 
-    string[] roles = { "Employee", "Manager", "Accountant", "Admin" };
+//Rol ve Admin Kullanýcý Oluþturma (oluþturduktan sonra youm satýrýna aldým.)
+//using (var scope = app.Services.CreateScope())
+//{
+//    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
 
-    foreach (var role in roles)
-    {
-        if (!await roleManager.RoleExistsAsync(role))
-        {
-            await roleManager.CreateAsync(new AppRole { Name = role });
-        }
-    }
-}
+//    string[] roles = { "Employee", "Manager", "Accountant", "Admin" };
+
+//    foreach (var role in roles)
+//    {
+//        if (!await roleManager.RoleExistsAsync(role))
+//        {
+//            await roleManager.CreateAsync(new AppRole { Name = role });
+//        }
+//    }
+//}
+
+//Departman Ekleme (oluþturduktan sonra youm satýrýna aldým.)
+//using (var scope = app.Services.CreateScope())
+//{
+//    var context = scope.ServiceProvider.GetRequiredService<ExpenseFlowContext>();
+
+//    if (!context.Departments.Any())
+//    {
+//        context.Departments.AddRange(
+//            new Department { Name = "IT" },
+//            new Department { Name = "Muhasebe" },
+//            new Department { Name = "Ýnsan Kaynaklarý" }
+//        );
+
+//        context.SaveChanges();
+//    }
+//}
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -60,6 +93,6 @@ app.MapControllerRoute(
 );
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Auth}/{action=Login}/{id?}");
 
 app.Run();

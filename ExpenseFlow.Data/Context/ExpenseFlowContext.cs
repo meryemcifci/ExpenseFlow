@@ -1,17 +1,10 @@
 ﻿using ExpenseFlow.Entity;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Formats.Tar;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExpenseFlow.Data.Context
 {
-    public class ExpenseFlowContext : IdentityDbContext<AppUser, IdentityRole<int>, int>
+    public class ExpenseFlowContext : IdentityDbContext<AppUser,AppRole, int>
     {
         
         public ExpenseFlowContext(DbContextOptions<ExpenseFlowContext> options) : base(options)

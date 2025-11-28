@@ -1,7 +1,7 @@
-﻿using ExpenseFlow.Entity;
-using ExpenseFlow.Business.Abstract;
+﻿using ExpenseFlow.Business.Abstract;
+using ExpenseFlow.Business.DTOs;
+using ExpenseFlow.Entity;
 using Microsoft.AspNetCore.Identity;
-using ExpenseFlow.WebUI.Models.Dtos;
 
 
 namespace ExpenseFlow.Business.Services
@@ -40,7 +40,7 @@ namespace ExpenseFlow.Business.Services
             var result=await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                //kayıt başarılı ise kullanıcıyı "Employee" rolüne ekle daha sonra Admi
+                //kayıt başarılı ise kullanıcıyı "Employee" rolüne ekle daha sonra Admin değiştirecek
                 await _userManager.AddToRoleAsync(user, "Employee");
             }
             return result;
