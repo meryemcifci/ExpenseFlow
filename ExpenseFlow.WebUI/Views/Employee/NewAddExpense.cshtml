@@ -1,0 +1,77 @@
+﻿@model ExpenseFlow.Business.DTOs.CreateExpenseDto
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{
+    ViewData["Title"] = "NewAddExpense";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+@section HeaderCards {
+
+    <div class="container-fluid mt--7">
+        <div class="row justify-content-center">
+            <div class="col-xl-8 col-lg-10">
+                <div class="card shadow">
+
+                    <div class="card-header bg-transparent">
+                        <h3 class="mb-0">Yeni Masraf Ekle</h3>
+                    </div>
+
+                    <div class="card-body">
+                        <form asp-action="NewAddExpense"
+                              asp-controller="Employee"
+                              method="post"
+                              enctype="multipart/form-data">
+
+                            @Html.AntiForgeryToken()
+
+                            <!-- Masraf Açıklama -->
+                            <div class="form-group">
+                                <label class="form-control-label">Masraf Açıklaması</label>
+                                <input asp-for="Description" class="form-control" required />
+                            </div>
+
+                            <!-- Tutar -->
+                            <div class="form-group">
+                                <label class="form-control-label">Tutar (₺)</label>
+                                <input asp-for="Amount" class="form-control" type="number" step="0.01" required />
+                            </div>
+
+                            <!-- Kategori -->
+                            <div class="form-group">
+                                <label class="form-control-label">Kategori</label>
+
+                                <select asp-for="CategoryId"
+                                        class="form-control"
+                                        asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))">
+                                    <option value="">Kategori Seçiniz</option>
+                                </select>
+                            </div>
+
+                            <!-- Fiş / Fatura -->
+                            <div class="form-group">
+                                <label class="form-control-label">Fiş / Fatura</label>
+                                <input asp-for="ReceiptFile" type="file" class="form-control" />
+                            </div>
+
+                            <!-- Butonlar -->
+                            <div class="text-right mt-4">
+                                <a asp-action="MyExpenses" asp-controller="Employee" class="btn btn-secondary">
+                                    Vazgeç
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    Kaydet
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+}
+

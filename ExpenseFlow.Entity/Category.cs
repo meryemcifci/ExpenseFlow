@@ -10,7 +10,7 @@ namespace ExpenseFlow.Entity
     {
         public int Id { get; set; }
         public string Name { get; set; } // "Yemek", "Ulaşım", "Konaklama"
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
       
         // Bir kategoride birden çok masraf olabilir.
