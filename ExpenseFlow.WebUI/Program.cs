@@ -1,5 +1,7 @@
 using ExpenseFlow.Business.Abstract;
 using ExpenseFlow.Business.Services;
+using ExpenseFlow.Data.Abstract;
+using ExpenseFlow.Data.Concrete;
 using ExpenseFlow.Data.Context;
 using ExpenseFlow.Entity;
 using Microsoft.AspNetCore.Identity;
@@ -17,7 +19,13 @@ builder.Services.AddIdentity<AppUser, AppRole>()
 
 //Servisler
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IExpenseService, ExpenseService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
+
+//Dal
+builder.Services.AddScoped<IExpenseDal, ExpenseDal>();
+builder.Services.AddScoped<ICategoryDal, CategoryDal>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -70,12 +78,29 @@ var app = builder.Build();
 //        context.SaveChanges();
 //    }
 //}
+//kategori ekledik
+//using (var scope = app.Services.CreateScope())
+//{
+//    var context = scope.ServiceProvider.GetRequiredService<ExpenseFlowContext>();
 
+//    if (!context.Categories.Any())
+//    {
+//        context.Categories.AddRange(
+//            new Category { Name = "Ulaþým" },
+//            new Category { Name = "Yemek" },
+//            new Category { Name = "Konaklama" },
+//            new Category { Name = "Ofis Gideri" },
+//            new Category { Name = "Diðer" }
+//        );
+
+//        context.SaveChanges();
+//    }
+//}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Employee/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }

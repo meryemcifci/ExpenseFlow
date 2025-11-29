@@ -1,0 +1,168 @@
+﻿@using ExpenseFlow.Entity
+@model ExpenseFlow.Business.DTOs.EmployeeExpenseDto
+
+@{
+    ViewData["Title"] = "MyExpenses";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>ExpenseFlow - Masraflarım</title>
+
+<link href="~/template/admin/startbootstrap-sb-admin-2-gh-pages/startbootstrap-sb-admin-2-gh-pages/assets/img/brand/favicon.png" rel="icon" type="image/png">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+<link href="~/template/admin/startbootstrap-sb-admin-2-gh-pages/startbootstrap-sb-admin-2-gh-pages/assets/js/plugins/nucleo/css/nucleo.css" rel="stylesheet" />
+<link href="~/template/admin/startbootstrap-sb-admin-2-gh-pages/startbootstrap-sb-admin-2-gh-pages/assets/js/plugins/@@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet" />
+<link href="~/template/admin/startbootstrap-sb-admin-2-gh-pages/startbootstrap-sb-admin-2-gh-pages/assets/css/argon-dashboard.css?v=1.1.2" rel="stylesheet" />
+
+@section HeaderCards {
+    <div class="row">
+
+        <!-- Onaylanan -->
+        <div class="col-xl-4 col-lg-6 mb-4">
+            <div class="card card-stats">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title text-uppercase text-muted mb-0">Onaylanan Masraflar</h5>
+                            <span class="h2 font-weight-bold mb-0">@Model.ApprovedCount</span>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon icon-shape bg-success text-white rounded-circle shadow">
+                                <i class="fas fa-check"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bekleyen -->
+        <div class="col-xl-4 col-lg-6 mb-4">
+            <div class="card card-stats">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title text-uppercase text-muted mb-0">Bekleyen Masraflar</h5>
+                            <span class="h2 font-weight-bold mb-0">@Model.PendingCount</span>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon icon-shape bg-warning text-white rounded-circle shadow">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reddedilen -->
+        <div class="col-xl-4 col-lg-6 mb-4">
+            <div class="card card-stats">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title text-uppercase text-muted mb-0">Reddedilen Masraflar</h5>
+                            <span class="h2 font-weight-bold mb-0">@Model.RejectedCount</span>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon icon-shape bg-danger text-white rounded-circle shadow">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+}
+
+@* ===================== TABLO ===================== *@
+<div class="container-fluid mt--7">
+    <div class="row">
+        <div class="col">
+            <div class="card shadow">
+
+                <div class="card-header border-0">
+                    <h3 class="mb-0">Masraflar Listesi</h3>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table align-items-center table-flush">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Masraf Adı</th>
+                                <th>Tutar</th>
+                                <th>Durum</th>
+                                <th>Tarih</th>
+                                <th>Fiş</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model.Expenses)
+                            {
+                                <tr>
+                                    <td>@item.Description</td>
+                                    <td>@item.Amount ₺</td>
+
+                                    <td>
+                                        @if (item.Status == ExpenseStatus.Approved)
+                                        {
+                                            <span class="badge badge-dot">
+                                                <i class="bg-success"></i> Onaylandı
+                                            </span>
+                                        }
+                                        else if (item.Status == ExpenseStatus.Pending)
+                                        {
+                                            <span class="badge badge-dot">
+                                                <i class="bg-warning"></i> Bekliyor
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-dot">
+                                                <i class="bg-danger"></i> Reddedildi
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td>@item.Date.ToShortDateString()</td>
+
+                                    <td class="text-right">
+                                        @if (!string.IsNullOrEmpty(item.ReceiptImage))
+                                        {
+                                            <a class="btn btn-sm btn-info" target="_blank" href="@item.ReceiptImage">
+                                                Görüntüle
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Yok</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/template/admin/startbootstrap-sb-admin-2-gh-pages/startbootstrap-sb-admin-2-gh-pages/assets/js/plugins/jquery/dist/jquery.min.js"></script>
+<script src="~/template/admin/startbootstrap-sb-admin-2-gh-pages/startbootstrap-sb-admin-2-gh-pages/assets/js/plugins/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/template/admin/startbootstrap-sb-admin-2-gh-pages/startbootstrap-sb-admin-2-gh-pages/assets/js/argon-dashboard.min.js?v=1.1.2"></script>
+<script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+<script>
+    window.TrackJS &&
+        TrackJS.install({
+            token: "ee6fab19c5a04ac1a32a645abde4613a",
+            application: "argon-dashboard-free"
+        });
+</script>
