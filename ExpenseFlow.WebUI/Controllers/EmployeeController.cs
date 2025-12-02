@@ -5,6 +5,7 @@ using ExpenseFlow.WebUI.Models;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Linq.Expressions;
 
 namespace ExpenseFlow.WebUI.Controllers
 {
@@ -31,25 +32,36 @@ namespace ExpenseFlow.WebUI.Controllers
             return View();
         }
         //masraflarım buradan görüntülenecek
-        public  IActionResult MyExpenses()
+        public IActionResult MyExpenses()
         {
             //Todo: try catch ekle ve log ekle...
-            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value);
-
-            var expenses = _expenseService
-                            .TGetList()
-                            .Where(x => x.UserId == userId)
-                            .ToList();
-
-            var model = new EmployeeExpenseDto
+            try
             {
-                Expenses = expenses,
-                ApprovedCount = expenses.Count(x => x.Status ==ExpenseStatus.Approved),
-                PendingCount = expenses.Count(x => x.Status == ExpenseStatus.Pending),
-                RejectedCount = expenses.Count(x => x.Status == ExpenseStatus.Rejected)
-            };
+                var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value);
 
-            return View(model);
+                var expenses = _expenseService
+                                .TGetList()
+                                .Where(x => x.UserId == userId)
+                                .ToList();
+
+                var model = new EmployeeExpenseDto
+                {
+                    Expenses = expenses,
+                    ApprovedCount = expenses.Count(x => x.Status == ExpenseStatus.Approved),
+                    PendingCount = expenses.Count(x => x.Status == ExpenseStatus.Pending),
+                    RejectedCount = expenses.Count(x => x.Status == ExpenseStatus.Rejected)
+                };
+
+                return View(model);
+
+                
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"ExpenseFlow_log_hata Employee/MyExpensee : {ex.Message} ");
+                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
+
         }
         //masraf ekleyeceğim.
         [HttpGet]
@@ -60,39 +72,56 @@ namespace ExpenseFlow.WebUI.Controllers
             ViewBag.Categories = categories;
 
             return View();
+            
         }
 
         [HttpPost]
-        public  async Task<IActionResult> NewAddExpense(CreateExpenseDto dto)
+        public async Task<IActionResult> NewAddExpense(CreateExpenseDto dto)
         {
-            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value);
 
-            var expense = new Expense
+            try
             {
-                Description = dto.Description,
-                Amount = dto.Amount,
-                CategoryId = dto.CategoryId,
-                UserId = userId
-               
-            };
+                var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value);
 
-            if (dto.ReceiptFile != null)
+                var expense = new Expense
+                {
+                    Description = dto.Description,
+                    Amount = dto.Amount,
+                    CategoryId = dto.CategoryId,
+                    UserId = userId
+
+                };
+
+                if (dto.ReceiptFile != null)
+                {
+                    var uploads = Path.Combine(_env.WebRootPath, "uploads");
+                    Directory.CreateDirectory(uploads);
+
+                    var fileName = Guid.NewGuid() + Path.GetExtension(dto.ReceiptFile.FileName);
+                    var filePath = Path.Combine(uploads, fileName);
+
+                    using var stream = new FileStream(filePath, FileMode.Create);
+                    await dto.ReceiptFile.CopyToAsync(stream);
+
+                    expense.ReceiptImage = "/uploads/" + fileName;
+                }
+                else
+                {
+                    _logger.LogInformation("ExpenseFlow_log_hata Employee/NewAddExpense : Receipt file is null.");
+                }
+
+                _expenseService.TInsert(expense);
+
+                return RedirectToAction("MyExpenses");
+
+            }
+            catch (Exception ex)
             {
-                var uploads = Path.Combine(_env.WebRootPath, "uploads");
-                Directory.CreateDirectory(uploads);
+                _logger.LogInformation($"ExpenseFlow_log_hata Employee/NewAddExpense : {ex.Message} ");
+                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
-                var fileName = Guid.NewGuid() + Path.GetExtension(dto.ReceiptFile.FileName);
-                var filePath = Path.Combine(uploads, fileName);
-
-                using var stream = new FileStream(filePath, FileMode.Create);
-                await dto.ReceiptFile.CopyToAsync(stream);
-
-                expense.ReceiptImage = "/uploads/" + fileName;
             }
 
-            _expenseService.TInsert(expense);
-
-            return RedirectToAction("MyExpenses");
         }
 
         public IActionResult Privacy()
