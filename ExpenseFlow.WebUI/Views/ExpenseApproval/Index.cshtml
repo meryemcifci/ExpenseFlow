@@ -1,0 +1,101 @@
+﻿
+@using ExpenseFlow.Entity
+@model List<Expense>
+
+@{
+    ViewData["Title"] = "Masraf Onay Merkezi";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<h3 class="mb-4">Bekleyen Masraf Talepleri</h3>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Açıklama</th>
+            <th>Tutar</th>
+            <th>Kategori</th>
+            <th>Tarih</th>
+            <th>İşlem</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Description</td>
+                <td>@item.Amount ₺</td>
+                <td>@item.Category.Name</td>
+                <td>@item.Date.ToString("dd.MM.yyyy")</td>
+                <td>
+                    <button class="btn btn-info btn-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#detailModal_@item.Id">
+                        Detay
+                    </button>
+                </td>
+
+            </tr>
+        }
+
+        @foreach (var item in Model)
+        {
+            <div class="modal fade" id="detailModal_@item.Id" tabindex="-1">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title">Masraf Detayı</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body">
+
+                            <p><strong>Çalışan:</strong> @item.User?.FirstName @item.User?.LastName</p>
+                            <p><strong>Kategori:</strong> @(item.Category != null ? item.Category.Name : "Kategori Yok")</p>
+                            <p><strong>Açıklama:</strong> @item.Description</p>
+                            <p><strong>Tutar:</strong> @item.Amount ₺</p>
+
+                            <hr />
+
+                            <strong>Fatura Görseli:</strong><br />
+
+                            @if (!string.IsNullOrEmpty(item.ReceiptImage))
+                            {
+                                <img src="@item.ReceiptImage"
+                                     class="img-fluid rounded border"
+                                     style="max-height:300px;" />
+                            }
+                            else
+                            {
+                                <p class="text-muted">Fatura yüklenmemiş.</p>
+                            }
+
+                        </div>
+
+                        <div class="modal-footer">
+
+                            <form asp-action="Approve" method="post">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button class="btn btn-success">Onayla</button>
+                            </form>
+
+                            <form asp-action="Reject" method="post">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button class="btn btn-danger">Reddet</button>
+                            </form>
+
+                            <button class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    </tbody>
+</table>
+

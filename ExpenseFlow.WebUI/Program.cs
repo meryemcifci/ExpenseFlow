@@ -1,4 +1,4 @@
-using ExpenseFlow.Business.Abstract;
+ï»¿using ExpenseFlow.Business.Abstract;
 using ExpenseFlow.Business.Services;
 using ExpenseFlow.Data.Abstract;
 using ExpenseFlow.Data.Concrete;
@@ -39,14 +39,14 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.Name = "ExpenseFlow.Auth";
     options.Cookie.HttpOnly = true;
 
-    options.ExpireTimeSpan = TimeSpan.FromDays(7);  // 7 gün hatýrlasýn
-    options.SlidingExpiration = true;               //Her giriþte süre uzasýn
+    options.ExpireTimeSpan = TimeSpan.FromDays(7);  // 7 gÃ¼n hatÄ±rlasÄ±n
+    options.SlidingExpiration = true;               //Her giriÅŸte sÃ¼re uzasÄ±n
 });
 
 var app = builder.Build();
 
 
-//Rol ve Admin Kullanýcý Oluþturma (oluþturduktan sonra youm satýrýna aldým.)
+//Rol ve Admin KullanÄ±cÄ± OluÅŸturma (oluÅŸturduktan sonra youm satÄ±rÄ±na aldÄ±m.)
 //using (var scope = app.Services.CreateScope())
 //{
 //    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
@@ -62,7 +62,7 @@ var app = builder.Build();
 //    }
 //}
 
-//Departman Ekleme (oluþturduktan sonra youm satýrýna aldým.)
+//Departman Ekleme (oluÅŸturduktan sonra youm satÄ±rÄ±na aldÄ±m.)
 //using (var scope = app.Services.CreateScope())
 //{
 //    var context = scope.ServiceProvider.GetRequiredService<ExpenseFlowContext>();
@@ -72,12 +72,14 @@ var app = builder.Build();
 //        context.Departments.AddRange(
 //            new Department { Name = "IT" },
 //            new Department { Name = "Muhasebe" },
-//            new Department { Name = "Ýnsan Kaynaklarý" }
+//            new Department { Name = "Ä°nsan KaynaklarÄ±" }
 //        );
 
 //        context.SaveChanges();
 //    }
 //}
+
+
 //kategori ekledik
 //using (var scope = app.Services.CreateScope())
 //{
@@ -86,16 +88,53 @@ var app = builder.Build();
 //    if (!context.Categories.Any())
 //    {
 //        context.Categories.AddRange(
-//            new Category { Name = "Ulaþým" },
+//            new Category { Name = "UlaÅŸÄ±m" },
 //            new Category { Name = "Yemek" },
 //            new Category { Name = "Konaklama" },
 //            new Category { Name = "Ofis Gideri" },
-//            new Category { Name = "Diðer" }
+//            new Category { Name = "DiÄŸer" }
 //        );
 
 //        context.SaveChanges();
 //    }
 //}
+
+
+////Manager KullanÄ±cÄ±
+//using (var scope = app.Services.CreateScope())
+//{
+//    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+//    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
+
+//    // Manager rolÃ¼ yoksa oluÅŸtur
+//    if (!await roleManager.RoleExistsAsync("Manager"))
+//    {
+//        await roleManager.CreateAsync(new AppRole { Name = "Manager" });
+//    }
+
+//    var existingUser = await userManager.FindByEmailAsync("testmanager1@gmail.com");
+
+//    if (existingUser == null)
+//    {
+//        var user = new AppUser
+//        {
+//            UserName = "testmanager1@gmail.com",
+//            Email = "testmanager1@gmail.com",
+//            FirstName = "Test",
+//            LastName = "Manager",
+//            DepartmentId = 3,
+//            EmailConfirmed = true
+//        };
+
+//        var result = await userManager.CreateAsync(user, "TestManager123#");
+
+//        if (result.Succeeded)
+//        {
+//            await userManager.AddToRoleAsync(user, "Manager");
+//        }
+//    }
+//}
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

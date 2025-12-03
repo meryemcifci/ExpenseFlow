@@ -22,6 +22,21 @@ namespace ExpenseFlow.Business.Services
 
         }
 
+        public List<Expense> GetApproveWithCategory()
+        {
+            return _expenseDal.GetApproveWithCategory();
+        }
+
+        public List<Expense> GetPendingWithCategory()
+        {
+            return _expenseDal.GetPendingWithCategory();
+        }
+
+        public List<Expense> GetRejectWithCategory()
+        {
+            return _expenseDal.GetRejectWithCategory();
+        }
+
         public void TDelete(int id)
         {
             throw new NotImplementedException();
@@ -29,7 +44,7 @@ namespace ExpenseFlow.Business.Services
 
         public Expense TGetById(int id)
         {
-            throw new NotImplementedException();
+            return _expenseDal.GetById(id);
         }
 
         public List<Expense> TGetList()
@@ -48,7 +63,10 @@ namespace ExpenseFlow.Business.Services
 
         public void TUpdate(Expense expense)
         {
-            throw new NotImplementedException();
+            _expenseDal.Update(expense);
         }
+
+        
+
     }
 }
