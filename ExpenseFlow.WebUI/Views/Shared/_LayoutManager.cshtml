@@ -1,0 +1,327 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <title>ExpenseFlow | Manager Paneli - @ViewData["Title"]</title>
+
+    <link href="~/template/admin/startbootstrap-sb-admin-2-gh-pages/startbootstrap-sb-admin-2-gh-pages/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700" rel="stylesheet">
+    <link href="~/template/admin/startbootstrap-sb-admin-2-gh-pages/startbootstrap-sb-admin-2-gh-pages/css/sb-admin-2.min.css" rel="stylesheet">
+
+    @await RenderSectionAsync("Styles", required: false)
+
+    <style>
+        @@keyframes bellShake {
+            0%
+
+        {
+            transform: rotate(0);
+        }
+
+        25% {
+            transform: rotate(5deg);
+        }
+
+        50% {
+            transform: rotate(-5deg);
+        }
+
+        75% {
+            transform: rotate(5deg);
+        }
+
+        100% {
+            transform: rotate(0);
+        }
+
+        }
+
+        .bell-animate {
+            animation: bellShake 1.2s infinite;
+        }
+    </style>
+
+</head>
+
+<body id="page-top">
+
+    <div id="wrapper">
+
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" asp-controller="Manager" asp-action="Index">
+                <div class="sidebar-brand-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">ExpenseFlow</div>
+            </a>
+
+            <hr class="sidebar-divider my-0">
+
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Manager" asp-action="Index">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Genel Bakış</span>
+                </a>
+            </li>
+
+            <hr class="sidebar-divider">
+
+            <div class="sidebar-heading">Onay İşlemleri</div>
+
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="ExpenseApproval" asp-action="Index">
+                    <i class="fas fa-fw fa-check-double"></i>
+                    <span>Bekleyen Harcamalar</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="ExpenseApproval" asp-action="ApprovedExpenses">
+                    <i class="fas fa-fw fa-check-circle"></i>
+                    <span>Onaylanan Harcamalar</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="ExpenseApproval" asp-action="RejectedExpenses">
+                    <i class="fas fa-fw fa-times-circle"></i>
+                    <span>Reddedilen Harcamalar</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Manager" asp-action="DepartmentExpenses">
+                    <i class="fas fa-fw fa-file-invoice-dollar"></i>
+                    <span>Departman Harcamaları</span>
+                </a>
+            </li>
+
+            <hr class="sidebar-divider">
+
+            <div class="sidebar-heading">Raporlar</div>
+
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Manager" asp-action="MonthlyReport">
+                    <i class="fas fa-fw fa-chart-line"></i>
+                    <span>Aylık Rapor</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Manager" asp-action="CategoryReport">
+                    <i class="fas fa-fw fa-chart-pie"></i>
+                    <span>Kategori Analizi</span>
+                </a>
+            </li>
+
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+
+        </ul>
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <div id="content">
+
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 shadow">
+
+                  @*   <ul class="navbar-nav ml-auto">
+
+                        <!-- Manager Notification Bell -->
+                        <li class="nav-item dropdown no-arrow mx-1">
+                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-bell fa-fw bell-animate"></i>
+
+                                @if (ViewBag.PendingCount != null && ViewBag.PendingCount > 0)
+                                {
+                                    <span class="badge badge-danger badge-counter">
+                                        @ViewBag.PendingCount
+                                    </span>
+                                }
+                            </a>
+
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                 aria-labelledby="alertsDropdown">
+
+                                <h6 class="dropdown-header">
+                                    Onay Bekleyen Talepler
+                                </h6>
+
+                                <a class="dropdown-item d-flex align-items-center"
+                                   asp-controller="ExpenseApproval"
+                                   asp-action="Index">
+
+                                    <div class="mr-3">
+                                        <div class="icon-circle bg-warning">
+                                            <i class="fas fa-file-invoice-dollar text-white"></i>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div class="small text-gray-500">Yeni Bildirim</div>
+                                        <span class="font-weight-bold">
+                                            @ViewBag.PendingCount adet masraf onay bekliyor
+                                        </span>
+                                    </div>
+                                </a>
+
+                            </div>
+                        </li>
+
+
+                    </ul> *@
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+
+                        <!-- Search Dropdown (visible on xs) -->
+                        <li class="nav-item dropdown no-arrow d-sm-none">
+                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-search fa-fw"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
+                                    aria-labelledby="searchDropdown">
+                                <form class="form-inline mr-auto w-100 navbar-search">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control bg-light border-0 small"
+                                                placeholder="Ara..." aria-label="Search" aria-describedby="basic-addon2" />
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="button">
+                                                <i class="fas fa-search fa-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </li>
+
+                        <!-- Alerts (PendingCount ile) -->
+                        <li class="nav-item dropdown no-arrow mx-1">
+                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-bell fa-fw @(ViewBag.PendingCount > 0 ? "bell-animate" : "")"></i>
+
+                                @if (ViewBag.PendingCount != null && ViewBag.PendingCount > 0)
+                                {
+                                    <span class="badge badge-danger badge-counter">
+                                        @ViewBag.PendingCount
+                                    </span>
+                                }
+                            </a>
+
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                    aria-labelledby="alertsDropdown">
+                                <h6 class="dropdown-header">
+                                    Bildirimler
+                                </h6>
+
+                                <a class="dropdown-item d-flex align-items-center"
+                                    asp-controller="ExpenseApproval"
+                                    asp-action="Index">
+                                    <div class="mr-3">
+                                        <div class="icon-circle bg-warning">
+                                            <i class="fas fa-file-invoice-dollar text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="small text-gray-500">Onay Bekleyen Talepler</div>
+                                        <span class="font-weight-bold">
+                                            @ViewBag.PendingCount adet masraf onay bekliyor
+                                        </span>
+                                    </div>
+                                </a>
+
+
+                                <a class="dropdown-item text-center small text-gray-500" asp-controller="ExpenseApproval" asp-action="Index">
+                                    Tüm talepleri gör
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="nav-item dropdown no-arrow mx-1">
+                            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-envelope fa-fw"></i>
+                                <span class="badge badge-danger badge-counter">3</span>
+                            </a>
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                    aria-labelledby="messagesDropdown">
+                                <h6 class="dropdown-header">
+                                    Mesajlar
+                                </h6>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="~/template/admin/startbootstrap-sb-admin-2-gh-pages/startbootstrap-sb-admin-2-gh-pages/img/undraw_profile_1.svg" alt="..." />
+                                        <div class="status-indicator bg-success"></div>
+                                    </div>
+                                    <div class="font-weight-bold">
+                                        <div class="text-truncate">Yeni bir departman harcama raporu hazır.</div>
+                                        <div class="small text-gray-500">Sistem · 2dk önce</div>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item text-center small text-gray-500" href="#">Tüm mesajları gör</a>
+                            </div>
+                        </li>
+
+                        <div class="topbar-divider d-none d-sm-block"></div>
+
+                        <!-- User Info -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                                    @(User.Identity.IsAuthenticated? User.Identity.Name : "Yönetici")
+                                </span>
+                                <img class="img-profile rounded-circle"
+                                        src="~/template/admin/startbootstrap-sb-admin-2-gh-pages/startbootstrap-sb-admin-2-gh-pages/img/undraw_profile.svg" />
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                    aria-labelledby="userDropdown">
+                                <a class="dropdown-item" asp-controller="Manager" asp-action="Profile">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profil
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <form asp-controller="Auth" asp-action="Logout" method="post" class="m-0">
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                        Çıkış Yap
+                                    </button>
+                                </form>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div class="container-fluid">
+                    @RenderBody()
+                </div>
+            </div>
+
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>© ExpenseFlow 2025</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="~/template/admin/startbootstrap-sb-admin-2-gh-pages/startbootstrap-sb-admin-2-gh-pages/vendor/jquery/jquery.min.js"></script>
+    <script src="~/template/admin/startbootstrap-sb-admin-2-gh-pages/startbootstrap-sb-admin-2-gh-pages/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/template/admin/startbootstrap-sb-admin-2-gh-pages/startbootstrap-sb-admin-2-gh-pages/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="~/template/admin/startbootstrap-sb-admin-2-gh-pages/startbootstrap-sb-admin-2-gh-pages/js/sb-admin-2.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

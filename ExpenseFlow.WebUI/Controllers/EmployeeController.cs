@@ -3,12 +3,15 @@ using ExpenseFlow.Business.DTOs;
 using ExpenseFlow.Entity;
 using ExpenseFlow.WebUI.Models;
 using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Linq.Expressions;
 
 namespace ExpenseFlow.WebUI.Controllers
 {
+
+    [Authorize(Roles = "Employee")]
     public class EmployeeController : Controller
     {
         public readonly ILogger<EmployeeController> _logger;

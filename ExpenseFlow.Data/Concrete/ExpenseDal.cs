@@ -1,12 +1,7 @@
 ﻿using ExpenseFlow.Data.Abstract;
 using ExpenseFlow.Data.Context;
 using ExpenseFlow.Entity;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseFlow.Data.Concrete
 {
@@ -36,11 +31,24 @@ namespace ExpenseFlow.Data.Concrete
             }
         }
 
+        public List<Expense> GetPendingWithCategory()
+        {
+            return _context.Expenses
+                .Include(x => x.Category)
+                .Where(x => x.Status == ExpenseStatus.Pending)
+                .ToList();
+        }
+
         public Expense GetById(int id)
         {
             try
             {
-                return _context.Expenses.Find(id);
+                return _context.Expenses
+                 .Include(x => x.Category)
+                 .FirstOrDefault(x => x.Id == id);
+
+
+
 
             }
             catch (Exception ex)
@@ -55,6 +63,7 @@ namespace ExpenseFlow.Data.Concrete
             try
             {
                 return _context.Expenses.ToList();
+
 
             }
             catch (Exception ex)
@@ -92,6 +101,22 @@ namespace ExpenseFlow.Data.Concrete
                 Console.WriteLine("Masraf güncelleme işlemi sırasında bir hata oluştu. Tekrar deneyiniz.");
                 throw;
             }
+        }
+
+        public List<Expense> GetApproveWithCategory()
+        {
+            return _context.Expenses
+                .Include(x => x.Category)
+                .Where(x => x.Status == ExpenseStatus.Approved)
+                .ToList();
+        }
+
+        public List<Expense> GetRejectWithCategory()
+        {
+            return _context.Expenses
+                .Include(x => x.Category)
+                .Where(x => x.Status == ExpenseStatus.Approved)
+                .ToList();
         }
     }
 }

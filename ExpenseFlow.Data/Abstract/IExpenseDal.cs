@@ -15,5 +15,9 @@ namespace ExpenseFlow.Data.Abstract
         void Delete(int id);
         Expense GetById(int id);
         List<Expense> GetList();
+        List<Expense> GetPendingWithCategory();
+        List<Expense> GetApproveWithCategory();
+        List<Expense> GetRejectWithCategory();
+
     }
 }

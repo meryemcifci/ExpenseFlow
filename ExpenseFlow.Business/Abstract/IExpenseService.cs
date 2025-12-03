@@ -12,5 +12,9 @@ namespace ExpenseFlow.Business.Abstract
         Expense TGetById(int id);// id ye göre masraf getirmek için
         List<Expense> TGetList();// tüm masrafları listelemek için
 
+        List<Expense> GetPendingWithCategory();
+        List<Expense> GetApproveWithCategory();
+        List<Expense> GetRejectWithCategory();
+
     }
 }

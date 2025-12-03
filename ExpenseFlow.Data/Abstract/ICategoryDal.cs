@@ -10,5 +10,6 @@ namespace ExpenseFlow.Data.Abstract
     public interface ICategoryDal
     {
         List<Category> GetList();
+
     }
 }

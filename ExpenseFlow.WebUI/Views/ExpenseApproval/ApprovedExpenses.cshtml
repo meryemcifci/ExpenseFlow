@@ -1,0 +1,48 @@
+﻿@using ExpenseFlow.Entity
+@model List<Expense>
+
+@{
+    ViewData["Title"] = "Onaylanan Harcamalar";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<h1 class="h3 mb-4 text-gray-800">Onaylanan Masraf Talepleri</h1>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        @if (!Model.Any())
+        {
+            <p class="text-muted">Onaylanmış masraf bulunmamaktadır.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Açıklama</th>
+                            <th>Tutar</th>
+                            <th>Kategori</th>
+                            <th>Tarih</th>
+                            <th>Durum</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Description</td>
+                                <td>@item.Amount.ToString("N2") ₺</td>
+                                <td>@(item.Category != null ? item.Category.Name : "Kategori Yok")</td>
+                                <td>@item.Date.ToString("dd.MM.yyyy")</td>
+                                <td>
+                                    <span class="badge badge-success">Onaylandı</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
