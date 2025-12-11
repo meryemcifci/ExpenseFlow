@@ -1,0 +1,124 @@
+﻿@model List<ExpenseFlow.Business.DTOs.UserDto>
+
+@{
+    ViewData["Title"] = "Personel Yönetimi";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid p-0">
+
+    <h1 class="h3 mb-3">Personel Listesi ve Yönetimi</h1>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="fa fa-check-circle me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            <i class="fa fa-exclamation-circle me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-white">
+            <h5 class="card-title mb-0">Sistemdeki Tüm Kullanıcılar</h5>
+        </div>
+        <div class="card-body">
+
+            @if (Model == null || Model.Count == 0)
+            {
+                <div class="text-center p-4">
+                    <span class="text-muted">Sistemde kayıtlı personel bulunamadı.</span>
+                </div>
+            }
+            else
+            {
+                <table class="table table-hover table-striped">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 25%;">Ad Soyad</th>
+                            <th style="width: 25%;">Departman</th>
+                            <th style="width: 20%;">Mevcut Rol</th>
+                            <th style="width: 30%;">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td class="align-middle">
+                                    <div class="d-flex align-items-center">
+                                        <div class="ms-2">
+                                            <h6 class="mb-0">@user.FirstName @user.LastName</h6>
+                                            <small class="text-muted" style="font-size: 11px;">
+                                                ID: @(user.Id.Length > 5 ? user.Id.Substring(0, 5) + "..." : user.Id)
+                                            </small>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="align-middle">
+                                    @if (user.DepartmentName == "Atanmamış")
+                                    {
+                                        <span class="text-muted fst-italic">Atanmamış</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="fw-bold text-dark">@user.DepartmentName</span>
+                                    }
+                                </td>
+
+                                <td class="align-middle">
+                                    @if (user.Role == "Admin")
+                                    {
+                                        <span class="badge bg-danger rounded-pill px-3">Yönetici (Admin)</span>
+                                    }
+                                    else if (user.Role == "Manager")
+                                    {
+                                        <span class="badge bg-success rounded-pill px-3">Departman Müdürü</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-info text-dark rounded-pill px-3">Çalışan (Personel)</span>
+                                    }
+                                </td>
+
+                                <td class="align-middle">
+                                    @if (user.Role != "Manager" && user.Role != "Admin")
+                                    {
+                                        <form asp-action="PromoteToManager" asp-controller="User" method="post" style="display:inline;">
+                                            <input type="hidden" name="userId" value="@user.Id" />
+
+                                            @if (user.DepartmentName == "Atanmamış")
+                                            {
+                                                <button type="button" class="btn btn-secondary btn-sm" disabled title="Önce departman atamalısınız">
+                                                    <i class="fa fa-lock"></i> Departman Yok
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button type="submit" class="btn btn-warning btn-sm" title="Bu kişiyi departman yöneticisi yap">
+                                                    <i class="fa fa-arrow-circle-up"></i> Yönetici Yap
+                                                </button>
+                                            }
+                                        </form>
+                                    }
+                                    else if (user.Role == "Manager")
+                                    {
+                                        <span class="text-success small"><i class="fa fa-check"></i> Yetkili</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>
