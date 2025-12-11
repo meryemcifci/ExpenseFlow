@@ -1,12 +1,12 @@
 ﻿using ExpenseFlow.Business.Abstract;
 using ExpenseFlow.Business.DTOs;
 using ExpenseFlow.Entity;
+using ExpenseFlow.WebUI.Hubs;
 using ExpenseFlow.WebUI.Models;
-using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Diagnostics;
-using System.Linq.Expressions;
 
 namespace ExpenseFlow.WebUI.Controllers
 {
@@ -19,15 +19,17 @@ namespace ExpenseFlow.WebUI.Controllers
         private readonly IExpenseService _expenseService;
         private readonly IWebHostEnvironment _env;
         private readonly ICategoryService _categoryService;
+        private readonly IHubContext<NotificationHub> _notificationHub;
 
 
-        public EmployeeController(ILogger<EmployeeController> logger,  IExpenseService expenseService, IWebHostEnvironment env, ICategoryService categoryService)
+        public EmployeeController(ILogger<EmployeeController> logger,  IExpenseService expenseService, IWebHostEnvironment env, ICategoryService categoryService, IHubContext<NotificationHub> notificationHub)
         {
 
             _logger = logger;
             _expenseService = expenseService;
             _env = env;
             _categoryService = categoryService;
+            _notificationHub = notificationHub;
         }
         //Dashboard
         public IActionResult Index()
@@ -73,7 +75,7 @@ namespace ExpenseFlow.WebUI.Controllers
             var categories = _categoryService.TGetList();
 
             ViewBag.Categories = categories;
-
+           
             return View();
             
         }
@@ -115,6 +117,13 @@ namespace ExpenseFlow.WebUI.Controllers
 
                 _expenseService.TInsert(expense);
 
+                //eş zamanlı bildirim gönderme(SignalR)
+                //NotificationHub üzerinden "Managers" grubundaki tüm bağlı client’lara ReceiveNotification adında bir event gönderdim.
+                 await _notificationHub.Clients.Group("Managers")
+                    .SendAsync("ReceiveNotification", 
+                    $"{User.Identity.Name} yeni bir masraf talebi oluşturdu.");
+
+
                 return RedirectToAction("MyExpenses");
 
             }
@@ -124,6 +133,8 @@ namespace ExpenseFlow.WebUI.Controllers
                 return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
             }
+
+
 
         }
 

@@ -78,6 +78,5 @@ namespace ExpenseFlow.WebUI.Controllers
             return View(expenses);
         }
 
-
     }
 }

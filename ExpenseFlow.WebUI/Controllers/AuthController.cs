@@ -222,12 +222,12 @@ namespace ExpenseFlow.WebUI.Controllers
                 if (await _userManager.IsInRoleAsync(user, "Admin"))
                 {
                     _logger.LogInformation($"ExpenseFlow_log Auth/Login post email: {user.Email} giriş yaptı!");
-                    return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                    return RedirectToAction("Index", "Admin", new { area = "Admin" });
                 }
                 else if (await _userManager.IsInRoleAsync(user, "Manager"))
                 {
                     _logger.LogInformation($"ExpenseFlow_log Auth/Login post email: {user.Email} giriş yaptı!");
-                    return RedirectToAction("Index", "Manager");
+                    return RedirectToAction("Index", "ExpenseApproval");
                 }
                 else if (await _userManager.IsInRoleAsync(user, "Accountant"))
                 {
