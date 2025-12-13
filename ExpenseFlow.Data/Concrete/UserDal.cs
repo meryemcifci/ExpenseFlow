@@ -34,5 +34,17 @@ namespace ExpenseFlow.Data.Concrete
                          .Select(x => (x.UserObj, x.DeptName, x.RoleName))
                          .ToList();
         }
+
+        public bool HasAccountant()
+        {
+            return _context.UserRoles
+            .Join(
+                _context.Roles,
+                ur => ur.RoleId,
+                r => r.Id,
+                (ur, r) => r.Name
+            )
+            .Any(roleName => roleName == "Accountant");
+        }
     }
 }

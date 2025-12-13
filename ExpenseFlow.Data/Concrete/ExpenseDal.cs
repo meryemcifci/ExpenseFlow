@@ -118,5 +118,27 @@ namespace ExpenseFlow.Data.Concrete
                 .Where(x => x.Status == ExpenseStatus.Approved)
                 .ToList();
         }
+
+        public async Task UpdatePaymentStatusAsync(int expenseId, PaymentStatus status)
+        {
+            var expense = await _context.Expenses
+                .Where(e => e.Id == expenseId && e.Status == ExpenseStatus.Approved)
+                .FirstOrDefaultAsync();
+
+            if (expense != null)
+            {
+                expense.PaymentStatus = status;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public List<Expense> GetApprovedExpenses()
+        {
+            return _context.Expenses
+            .Include(e => e.Category)
+            .Where(e => e.Status == ExpenseStatus.Approved)
+            .OrderByDescending(e => e.Date)
+            .ToList();
+        }
     }
 }

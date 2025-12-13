@@ -22,6 +22,11 @@ namespace ExpenseFlow.Business.Services
 
         }
 
+        public List<Expense> GetApprovedExpenses()
+        {
+            return _expenseDal.GetApprovedExpenses();
+        }
+
         public List<Expense> GetApproveWithCategory()
         {
             return _expenseDal.GetApproveWithCategory();
@@ -66,7 +71,10 @@ namespace ExpenseFlow.Business.Services
             _expenseDal.Update(expense);
         }
 
-        
+        public async Task UpdatePaymentStatusAsync(int expenseId, PaymentStatus status)
+        {
+            await _expenseDal.UpdatePaymentStatusAsync(expenseId, status);
+        }
 
     }
 }

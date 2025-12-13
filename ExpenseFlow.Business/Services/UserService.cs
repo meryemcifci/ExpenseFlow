@@ -4,6 +4,7 @@ using ExpenseFlow.Data.Abstract;
 using ExpenseFlow.Data.Context;
 using ExpenseFlow.Entity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseFlow.Business.Services
 {
@@ -34,6 +35,11 @@ namespace ExpenseFlow.Business.Services
             }).ToList();
 
             return dtoList;
+        }
+
+        public bool HasAccountant()
+        {
+            return _userDal.HasAccountant();
         }
     }
 }
