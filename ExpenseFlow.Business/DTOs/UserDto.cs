@@ -7,6 +7,7 @@
         public string LastName { get; set; }
         public string DepartmentName { get; set; }
         public string Role { get; set; }
+
     }
     
 }

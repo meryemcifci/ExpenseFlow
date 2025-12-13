@@ -1,0 +1,100 @@
+﻿@model List<ApprovedExpenseDto>
+@using ExpenseFlow.Entity
+@{
+    ViewData["Title"] = "Onaylı Masraflar";
+    Layout = "~/Views/Shared/_LayoutAccountant.cshtml";
+}
+<div class="card shadow mb-4">
+    <div class="card-body">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+
+        @if (Model == null || !Model.Any())
+        {
+            <p class="text-muted">Onaylanmış masraf bulunmamaktadır.</p>
+        }
+        else
+        {
+            <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Açıklama</th>
+                        <th>Tutar</th>
+                        <th>Kategori</th>
+                        <th>Tarih</th>
+                        <th>Ödeme Durumu</th>
+                        <th>İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Description</td>
+                            <td>@item.Amount.ToString("N2") ₺</td>
+                            <td>@item.CategoryName</td>
+                            <td>@item.Date.ToString("dd.MM.yyyy")</td>
+                            <td>
+                                <span class="badge @(item.PaymentStatus == PaymentStatus.Paid ? "badge-success" : "badge-warning")">
+                                    @item.PaymentStatus.ToString()
+                                </span>
+                            </td>
+                            <td>
+                                @if (item.PaymentStatus == PaymentStatus.Pending)
+                                {
+                                    <button class="btn btn-sm btn-outline-primary"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#confirmModal"
+                                            data-expense-id="@item.Id">
+                                        Ödendi olarak işaretle
+                                    </button>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">✔ Ödendi</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="UpdatePaymentStatus" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel">Onayla</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bu masrafı <strong>ödendi</strong> olarak işaretlemek istediğinizden emin misiniz?</p>
+                    <input type="hidden" name="ExpenseId" id="expenseIdInput" />
+                    <input type="hidden" name="PaymentStatus" value="1" /> @* 1 = Paid *@
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Evet, ödendi</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var confirmModal = document.getElementById('confirmModal');
+        confirmModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var expenseId = button.getAttribute('data-expense-id');
+            document.getElementById('expenseIdInput').value = expenseId;
+        });
+    </script>
+}

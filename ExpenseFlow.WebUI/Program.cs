@@ -1,6 +1,7 @@
 ﻿#region Using Directives
 using ExpenseFlow.Business.Abstract;
 using ExpenseFlow.Business.DTOs;
+using ExpenseFlow.Business.Mapping;
 using ExpenseFlow.Business.Services;
 using ExpenseFlow.Data.Abstract;
 using ExpenseFlow.Data.Concrete;
@@ -38,6 +39,12 @@ builder.Services.AddScoped<IUserService, UserService>();
 
 //SignalR
 builder.Services.AddSignalR();
+#endregion
+
+#region Mapping
+
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
 #endregion
 
 #region Data Access Layers

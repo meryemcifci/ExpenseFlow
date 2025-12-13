@@ -77,42 +77,83 @@
                                 <td class="align-middle">
                                     @if (user.Role == "Admin")
                                     {
-                                        <span class="badge bg-danger rounded-pill px-3">Yönetici (Admin)</span>
+                                        <span class="badge bg-danger rounded-pill px-3">Yönetici</span>
                                     }
                                     else if (user.Role == "Manager")
                                     {
                                         <span class="badge bg-success rounded-pill px-3">Departman Müdürü</span>
                                     }
+                                    else if (user.Role == "Accountant")
+                                    {
+                                        <span class="badge bg-light rounded-pill px-3">Muhasebeci</span>
+                                    }
                                     else
                                     {
-                                        <span class="badge bg-info text-dark rounded-pill px-3">Çalışan (Personel)</span>
+                                        <span class="badge bg-info text-dark rounded-pill px-3">Personel</span>
                                     }
                                 </td>
 
                                 <td class="align-middle">
+
                                     @if (user.Role != "Manager" && user.Role != "Admin")
                                     {
-                                        <form asp-action="PromoteToManager" asp-controller="User" method="post" style="display:inline;">
+                                        <form asp-area="Admin"
+                                              asp-action="PromoteToManager"
+                                              asp-controller="Admin"
+                                              method="post"
+                                              style="display:inline;">
+                                            @Html.AntiForgeryToken()
+
                                             <input type="hidden" name="userId" value="@user.Id" />
 
                                             @if (user.DepartmentName == "Atanmamış")
                                             {
-                                                <button type="button" class="btn btn-secondary btn-sm" disabled title="Önce departman atamalısınız">
+                                                <button type="button"
+                                                        class="btn btn-secondary btn-sm"
+                                                        disabled>
                                                     <i class="fa fa-lock"></i> Departman Yok
                                                 </button>
                                             }
                                             else
                                             {
-                                                <button type="submit" class="btn btn-warning btn-sm" title="Bu kişiyi departman yöneticisi yap">
-                                                    <i class="fa fa-arrow-circle-up"></i> Yönetici Yap
+                                                <button type="submit"
+                                                        class="btn btn-warning btn-sm"
+                                                        title="Bu kişiyi departman müdürü yap">
+                                                    <i class="fa fa-arrow-circle-up"></i> Departman Müdürü Yap
                                                 </button>
                                             }
                                         </form>
                                     }
                                     else if (user.Role == "Manager")
                                     {
-                                        <span class="text-success small"><i class="fa fa-check"></i> Yetkili</span>
+                                        <span class="text-success small me-2">
+                                            <i class="fa fa-check"></i> Müdür
+                                        </span>
                                     }
+                                   
+                                    @if (user.Role != "Accountant" && user.Role != "Admin")
+                                    {
+                                        <form asp-area="Admin"
+                                              asp-controller="Admin"
+                                              asp-action="PromoteToAccountant"
+                                              method="post"
+                                              style="display:inline;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="userId" value="@user.Id" />
+                                            <button type="submit"
+                                                    class="btn btn-warning btn-sm">
+                                                <i class="fa fa-calculator"></i> Muhasebeci Yap
+                                            </button>
+                                        </form>
+
+                                    }
+                                    else if (user.Role == "Accountant")
+                                    {
+                                        <span class="text-success small ms-2">
+                                            <i class="fa fa-check"></i> Muhasebeci
+                                        </span>
+                                    }
+                                    
                                 </td>
                             </tr>
                         }
@@ -120,5 +161,6 @@
                 </table>
             }
         </div>
+
     </div>
 </div>

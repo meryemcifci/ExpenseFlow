@@ -16,5 +16,10 @@ namespace ExpenseFlow.Business.Abstract
         List<Expense> GetApproveWithCategory();
         List<Expense> GetRejectWithCategory();
 
+        Task UpdatePaymentStatusAsync(int expenseId, PaymentStatus status);
+        List<Expense> GetApprovedExpenses();
+
+
+
     }
 }

@@ -20,8 +20,9 @@ namespace ExpenseFlow.Entity
         public string ReceiptImage { get; set; } // Fişin dosya yolu (Örn: "/img/fis1.jpg")
 
         public ExpenseStatus Status { get; set; } = ExpenseStatus.Pending; // Varsayılan: Bekliyor
+        public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Pending;
 
-       
+
         // 1. Bu masrafı kim yaptı?
         public int UserId { get; set; }
         public AppUser User { get; set; }

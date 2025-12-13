@@ -20,21 +20,27 @@ namespace ExpenseFlow.WebUI.Areas.Admin.Controllers
         private readonly IUserService _userService;
 
 
-        public AdminController(ILogger<AdminController> logger,UserManager<AppUser> userManager,IDepartmentService departmentService,IUserService userService)
+        public AdminController(ILogger<AdminController> logger,UserManager<AppUser> userManager, IDepartmentService departmentService,IUserService userService)
         {
             _logger = logger;
             _userManager = userManager;
             _departmentService = departmentService;
             _userService = userService;
         }
-        [HttpGet]
-        public  IActionResult PromoteToManager() { 
-            return View();
-        }
 
         [HttpPost]
         public async Task<IActionResult> PromoteToManager(string userId)
         {
+            Console.WriteLine("POST ACTION ÇALIŞTI");
+            //zaten UI'da buton yok
+            var currentUserId = _userManager.GetUserId(User);
+
+            if (userId == currentUserId)
+            {
+                TempData["Error"] = "Admin kendi rolünü değiştiremez.";
+                return RedirectToAction("Index");
+            }
+
             //  Kullanıcıyı bul
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null) return NotFound();
@@ -73,14 +79,47 @@ namespace ExpenseFlow.WebUI.Areas.Admin.Controllers
             if (result.Succeeded)
             {
                 TempData["Success"] = $"{user.UserName} başarıyla departman yöneticisi yapıldı.";
+                
             }
             else
             {
-                TempData["Error"] = "Rol atama işlemi sırasında bir hata oluştu.";
+                TempData["Error"] = "Rol atama işlemi sırasında bir hata oluştu.(Manager)";
+            }
+          
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PromoteToAccountant(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                TempData["Error"] = "Kullanıcı bulunamadı.";
+                return RedirectToAction("Index");
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, roles);
+
+            var result = await _userManager.AddToRoleAsync(user, "Accountant");
+
+            if (result.Succeeded)
+            {
+                TempData["Success"] = $"{user.UserName} başarıyla Muhasebeci yapıldı.";
+            }
+            else
+            {
+                // ⛔ Burada hata varsa gör
+                TempData["Error"] = string.Join(" | ", result.Errors.Select(e => e.Description));
             }
 
             return RedirectToAction("Index");
         }
+
+
 
         public IActionResult Index()
         {
