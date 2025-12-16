@@ -7,6 +7,7 @@
     Layout = null;
 }
 
+
 <title>ExpenseFlow Kayıt Ol</title>
 
 <!-- Custom fonts for this template-->
@@ -55,13 +56,14 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <select asp-for="DepartmentId"
-                                              
-                                                asp-items="@(ViewData["Departments"] as SelectList)"
+                                                name="DepartmentId"
+                                                asp-items="@(ViewBag.Departments as List<SelectListItem>)"
                                                 class="form-control form-control-user"
                                                 placeholder="Select Department">
-                                            <option value="">Select Department</option>
+                                            <option value="" disabled>Departman Seçiniz</option>
                                         </select>
-                                        <p>Seçilen Id: @Model?.DepartmentId</p>
+                                        <p>Seçilen ID: @Model?.DepartmentId</p>
+
                                     </div>
                                 </div>
                                 <div class="form-group row">
