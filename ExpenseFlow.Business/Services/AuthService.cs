@@ -34,7 +34,7 @@ namespace ExpenseFlow.Business.Services
             {
                 UserName = model.FirstName + model.LastName,
                 Email = model.Email,
-                DepartmentId = model.DepartmentId
+                DepartmentId = model.DepartmentId.Value
 
             };
             var result=await _userManager.CreateAsync(user, model.Password);

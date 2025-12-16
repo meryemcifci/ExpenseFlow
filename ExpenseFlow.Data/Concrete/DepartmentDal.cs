@@ -1,5 +1,7 @@
 ﻿using ExpenseFlow.Data.Context;
 using ExpenseFlow.DataAccess.Abstract;
+using ExpenseFlow.Entity;
+
 namespace ExpenseFlow.DataAccess.Concrete
 {
     public class DepartmentDal : IDepartmentDal
@@ -9,6 +11,13 @@ namespace ExpenseFlow.DataAccess.Concrete
         public DepartmentDal(ExpenseFlowContext context)
         {
             _context = context;
+        }
+
+        public List<Department> GetSelectableDepartments()
+        {
+            return _context.Departments
+                   .Where(d => d.Name != "Muhasebe" && d.Name != "Yönetim")
+                   .ToList();
         }
 
         public bool IsManagerExistsInDepartment(int departmentId)

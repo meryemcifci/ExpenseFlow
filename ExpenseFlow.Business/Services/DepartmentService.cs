@@ -1,5 +1,7 @@
 ﻿using ExpenseFlow.Business.Abstract;
 using ExpenseFlow.DataAccess.Abstract;
+using ExpenseFlow.DataAccess.Concrete;
+using ExpenseFlow.Entity;
 
 namespace ExpenseFlow.Business.Services
 {
@@ -22,5 +24,11 @@ namespace ExpenseFlow.Business.Services
                 throw new InvalidOperationException("Bu departmanın zaten bir yöneticisi (Manager) bulunmaktadır. Yeni yönetici atamadan önce mevcut olanı görevden almalısınız.");
             }
         }
+
+        public List<Department> GetSelectableDepartments()
+        {
+            return _departmentDal.GetSelectableDepartments();
+        }
     }
 }
+

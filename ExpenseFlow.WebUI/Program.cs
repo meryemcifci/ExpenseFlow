@@ -177,7 +177,7 @@ var app = builder.Build();
 //    }
 //}
 
-//Departman Ekleme (oluşturduktan sonra youm satırına aldım.)
+//Departman Ekleme(oluşturduktan sonra youm satırına aldım.)
 //using (var scope = app.Services.CreateScope())
 //{
 //    var context = scope.ServiceProvider.GetRequiredService<ExpenseFlowContext>();
@@ -187,7 +187,10 @@ var app = builder.Build();
 //        context.Departments.AddRange(
 //            new Department { Name = "IT" },
 //            new Department { Name = "Muhasebe" },
-//            new Department { Name = "İnsan Kaynakları" }
+//            new Department { Name = "İnsan Kaynakları" },
+//            new Department { Name = "Finans" },
+//            new Department { Name = "Ar-Ge" },
+//            new Department { Name = "Hukuk" }
 //        );
 
 //        context.SaveChanges();

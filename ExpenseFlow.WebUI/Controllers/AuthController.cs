@@ -1,6 +1,8 @@
 ﻿using ExpenseFlow.Business.Abstract;
 using ExpenseFlow.Business.DTOs;
+using ExpenseFlow.Business.Services;
 using ExpenseFlow.Data.Context;
+using ExpenseFlow.DataAccess.Abstract;
 using ExpenseFlow.Entity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -19,16 +21,16 @@ namespace ExpenseFlow.WebUI.Controllers
         private readonly ILogger<AuthController> _logger;
         private UserManager<AppUser> _userManager;
         private SignInManager<AppUser> _signinManager;
-        private readonly ExpenseFlowContext _context;
+        private readonly IDepartmentService _departmentService;
 
 
-        public AuthController(IAuthService authService, ILogger<AuthController> logger, UserManager<AppUser> userManager, SignInManager<AppUser> signinManager, ExpenseFlowContext context)
+        public AuthController(IAuthService authService, ILogger<AuthController> logger, UserManager<AppUser> userManager, SignInManager<AppUser> signinManager, IDepartmentService departmentService)
         {
             _authService = authService;
             _logger = logger;
             _userManager = userManager;
             _signinManager = signinManager;
-            _context = context;
+            _departmentService = departmentService;
         }
 
        
@@ -48,8 +50,7 @@ namespace ExpenseFlow.WebUI.Controllers
             try
             {
 
-                LoadDepartments();
-
+                LoadDepartments(model.DepartmentId);
 
 
                 if (!ModelState.IsValid)
@@ -76,7 +77,7 @@ namespace ExpenseFlow.WebUI.Controllers
                     LastName = model.LastName,
                     Email = model.Email,
                     UserName = model.UserName,
-                    DepartmentId = model.DepartmentId,
+                    DepartmentId = model.DepartmentId.Value,
                     EmailConfirmed = false,
                     PhoneNumberConfirmed = false,
                     TwoFactorEnabled = false,
@@ -131,11 +132,36 @@ namespace ExpenseFlow.WebUI.Controllers
             }
             
         }
-        private void LoadDepartments()
+        //private void LoadDepartments(int? selectedDepartmentId = null)
+        //{
+        //    var departments = _departmentService.GetSelectableDepartments();
+
+        //    ViewBag.Departments = new SelectList(
+        //        items: departments,
+        //        dataValueField: "Id",
+        //        dataTextField: "Name",
+        //        selectedValue: selectedDepartmentId?.ToString()
+        //    );
+
+        //}
+
+        private void LoadDepartments(int? selectedId = null)
         {
-            var departments = _context.Departments.ToList();
-            ViewData["Departments"] = new SelectList(departments, "Id", "Name");
+            var departments = _departmentService.GetSelectableDepartments();
+
+            var selectListItems = departments.Select(d => new SelectListItem
+            {
+                Value = d.Id.ToString(),
+                Text = d.Name,
+                Selected = selectedId.HasValue && d.Id == selectedId.Value
+            }).ToList();
+
+            ViewBag.Departments = selectListItems;
         }
+
+
+
+
 
 
         [HttpGet]//sayfayı aç
