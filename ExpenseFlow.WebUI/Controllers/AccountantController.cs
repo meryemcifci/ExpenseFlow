@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using ExpenseFlow.Business.Abstract;
-using ExpenseFlow.Core.Hubs;
 using ExpenseFlow.Entity;
+using ExpenseFlow.WebUI.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

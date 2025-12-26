@@ -2,13 +2,14 @@
 using ExpenseFlow.Business.Abstract;
 using ExpenseFlow.Business.Mapping;
 using ExpenseFlow.Business.Services;
-using ExpenseFlow.Core.Hubs;
 using ExpenseFlow.Data.Abstract;
 using ExpenseFlow.Data.Concrete;
 using ExpenseFlow.Data.Context;
 using ExpenseFlow.DataAccess.Abstract;
 using ExpenseFlow.DataAccess.Concrete;
 using ExpenseFlow.Entity;
+using ExpenseFlow.WebUI.Hubs;
+using ExpenseFlow.WebUI.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,6 +36,9 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+
+// WebUI içinde bulunan arayüz için hazırlanan servis
+builder.Services.AddScoped<INotificationPublisher, SignalRNotificationPublisher>();
 
 //SignalR
 builder.Services.AddSignalR();
@@ -264,7 +268,6 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
 app.UseAuthorization();

@@ -1,9 +1,8 @@
 ﻿using ExpenseFlow.Business.Abstract;
-using ExpenseFlow.Core.Hubs;
 using ExpenseFlow.Data.Abstract;
 using ExpenseFlow.Entity;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.SignalR;
+
 
 namespace ExpenseFlow.Business.Services
 {
@@ -11,16 +10,16 @@ namespace ExpenseFlow.Business.Services
     {
         private readonly INotificationDal _notificationDal;
         private readonly UserManager<AppUser> _userManager;
-        private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly INotificationPublisher _notificationPublisher;
 
         public NotificationService(
             INotificationDal notificationDal,
             UserManager<AppUser> userManager,
-            IHubContext<NotificationHub> hubContext)
+            INotificationPublisher notificationPublisher)
         {
             _notificationDal = notificationDal;
             _userManager = userManager;
-            _hubContext = hubContext;
+            _notificationPublisher = notificationPublisher;
         }
         // Çalışanın departman yöneticisine bildirim oluşturur
         public async Task CreateNotificationForDepartmentManagerAsync(int employeeUserId, string message, string redirectUrl)
@@ -50,14 +49,15 @@ namespace ExpenseFlow.Business.Services
 
             _notificationDal.Add(notification);
 
-            await _hubContext.Clients
-                .User(departmentManager.Id.ToString())
-                .SendAsync("ReceiveNotification", new
+            await _notificationPublisher.PublishToUserAsync(
+                departmentManager.Id,
+                new
                 {
                     id = notification.Id,
                     message = notification.Message,
                     redirectUrl = notification.RedirectUrl
                 });
+
         }
 
         // Belirli bir role sahip tüm kullanıcılara bildirim oluşturur
@@ -79,14 +79,14 @@ namespace ExpenseFlow.Business.Services
 
                 _notificationDal.Add(notification);
 
-                await _hubContext.Clients
-                    .User(user.Id.ToString())
-                    .SendAsync("ReceiveNotification", new
-                    {
-                        id = notification.Id,
-                        message = notification.Message,
-                        redirectUrl = notification.RedirectUrl
-                    });
+                await _notificationPublisher.PublishToUserAsync(
+                  user.Id,
+                  new
+                  {
+                      id = notification.Id,
+                      message = notification.Message,
+                      redirectUrl = notification.RedirectUrl
+                  });
             }
 
         }
@@ -104,14 +104,15 @@ namespace ExpenseFlow.Business.Services
 
             _notificationDal.Add(notification);
 
-            await _hubContext.Clients
-                .User(userId.ToString())
-                .SendAsync("ReceiveNotification", new
-                {
-                    id = notification.Id,
-                    message = notification.Message,
-                    redirectUrl = notification.RedirectUrl
-                });
+            await _notificationPublisher.PublishToUserAsync(
+              userId,
+              new
+              {
+                  id = notification.Id,
+                  message = notification.Message,
+                  redirectUrl = notification.RedirectUrl
+              });
+
         }
 
         // Kullanıcıya ait tüm bildirimleri getirir

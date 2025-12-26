@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.SignalR;
 
-namespace ExpenseFlow.Core.Hubs
+namespace ExpenseFlow.WebUI.Hubs
 {
     public class NotificationHub : Hub
     {

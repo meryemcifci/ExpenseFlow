@@ -1,7 +1,7 @@
 ﻿using ExpenseFlow.Business.Abstract;
 using ExpenseFlow.Business.DTOs;
-using ExpenseFlow.Core.Hubs;
 using ExpenseFlow.Entity;
+using ExpenseFlow.WebUI.Hubs;
 using ExpenseFlow.WebUI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
