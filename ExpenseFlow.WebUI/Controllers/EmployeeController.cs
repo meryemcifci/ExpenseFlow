@@ -1,7 +1,7 @@
 ﻿using ExpenseFlow.Business.Abstract;
 using ExpenseFlow.Business.DTOs;
+using ExpenseFlow.Core.Hubs;
 using ExpenseFlow.Entity;
-using ExpenseFlow.WebUI.Hubs;
 using ExpenseFlow.WebUI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,9 +20,10 @@ namespace ExpenseFlow.WebUI.Controllers
         private readonly IWebHostEnvironment _env;
         private readonly ICategoryService _categoryService;
         private readonly IHubContext<NotificationHub> _notificationHub;
+        private readonly INotificationService _notificationService;
 
 
-        public EmployeeController(ILogger<EmployeeController> logger,  IExpenseService expenseService, IWebHostEnvironment env, ICategoryService categoryService, IHubContext<NotificationHub> notificationHub)
+        public EmployeeController(ILogger<EmployeeController> logger,  IExpenseService expenseService, IWebHostEnvironment env, ICategoryService categoryService, IHubContext<NotificationHub> notificationHub, INotificationService notificationService)
         {
 
             _logger = logger;
@@ -30,6 +31,7 @@ namespace ExpenseFlow.WebUI.Controllers
             _env = env;
             _categoryService = categoryService;
             _notificationHub = notificationHub;
+            _notificationService = notificationService;
         }
         //Dashboard
         public IActionResult Index()
@@ -42,6 +44,8 @@ namespace ExpenseFlow.WebUI.Controllers
             //Todo: try catch ekle ve log ekle...
             try
             {
+                
+
                 var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value);
 
                 var expenses = _expenseService
@@ -116,12 +120,12 @@ namespace ExpenseFlow.WebUI.Controllers
                 }
 
                 _expenseService.TInsert(expense);
+                await _notificationService.CreateNotificationForDepartmentManagerAsync(
+                     userId,
+                     "Yeni bir masraf talebi var.",
+                     "/ExpenseApproval/Index"   
+                );
 
-                //eş zamanlı bildirim gönderme(SignalR)
-                //NotificationHub üzerinden "Managers" grubundaki tüm bağlı client’lara ReceiveNotification adında bir event gönderdim.
-                 await _notificationHub.Clients.Group("Managers")
-                    .SendAsync("ReceiveNotification", 
-                    $"{User.Identity.Name} yeni bir masraf talebi oluşturdu.");
 
 
                 return RedirectToAction("MyExpenses");

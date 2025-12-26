@@ -1,5 +1,6 @@
 ﻿using ExpenseFlow.Business.Abstract;
 using ExpenseFlow.Business.DTOs;
+using ExpenseFlow.Business.Services;
 using ExpenseFlow.Entity;
 using ExpenseFlow.WebUI.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -18,14 +19,16 @@ namespace ExpenseFlow.WebUI.Areas.Admin.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly IDepartmentService _departmentService;
         private readonly IUserService _userService;
+        private readonly INotificationService _notificationService;
 
 
-        public AdminController(ILogger<AdminController> logger,UserManager<AppUser> userManager, IDepartmentService departmentService,IUserService userService)
+        public AdminController(ILogger<AdminController> logger,UserManager<AppUser> userManager, IDepartmentService departmentService,IUserService userService,INotificationService notificationService)
         {
             _logger = logger;
             _userManager = userManager;
             _departmentService = departmentService;
             _userService = userService;
+            _notificationService = notificationService;
         }
 
         [HttpPost]
@@ -79,7 +82,13 @@ namespace ExpenseFlow.WebUI.Areas.Admin.Controllers
             if (result.Succeeded)
             {
                 TempData["Success"] = $"{user.UserName} başarıyla departman yöneticisi yapıldı.";
-                
+                await _notificationService.CreateNotificationForRoleAsync(
+                   "Admin",
+                   $"{user.UserName} kullanıcısının rolü Manager olarak güncellendi.",
+                   "/Profile/Index"
+               );
+
+
             }
             else
             {
@@ -109,6 +118,12 @@ namespace ExpenseFlow.WebUI.Areas.Admin.Controllers
             if (result.Succeeded)
             {
                 TempData["Success"] = $"{user.UserName} başarıyla Muhasebeci yapıldı.";
+
+                await _notificationService.CreateNotificationForRoleAsync(
+                    "Admin",
+                    $"{user.UserName} kullanıcısının rolü Accountant olarak güncellendi.",
+                    "/Profile/Index"
+                );
             }
             else
             {
