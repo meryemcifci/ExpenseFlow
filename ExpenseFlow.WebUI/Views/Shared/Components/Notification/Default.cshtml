@@ -1,0 +1,49 @@
+﻿@model List<ExpenseFlow.Entity.Notification>
+
+<a class="nav-link dropdown-toggle"
+   href="#"
+   id="notificationDropdown"
+   data-toggle="dropdown">
+    <i class="fas fa-bell fa-fw"></i>
+    <span id="notificationCount"
+          class="badge badge-danger badge-counter">
+        @(ViewBag.UnreadCount ?? 0)
+    </span>
+</a>
+
+<div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+     aria-labelledby="notificationDropdown"
+     style="max-height:300px; overflow-y:auto;">
+
+    <h6 class="dropdown-header">
+        Bildirimler
+    </h6>
+
+    @if (Model != null && Model.Any())
+    {
+        @foreach (var notification in Model)
+        {
+           
+
+            <button type="button"
+                    class="dropdown-item notification-item"
+                    data-id="@notification.Id"
+                    data-url="@notification.RedirectUrl">
+                <div class="small text-gray-800">
+                    @notification.Message
+                </div>
+                <div class="text-muted small">
+                    @notification.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                </div>
+            </button>
+
+        }
+
+    }
+    else
+    {
+        <span class="dropdown-item text-muted small">
+            Bildirim yok
+        </span>
+    }
+</div>

@@ -1,16 +1,14 @@
 ﻿#region Using Directives
 using ExpenseFlow.Business.Abstract;
-using ExpenseFlow.Business.DTOs;
 using ExpenseFlow.Business.Mapping;
 using ExpenseFlow.Business.Services;
+using ExpenseFlow.Core.Hubs;
 using ExpenseFlow.Data.Abstract;
 using ExpenseFlow.Data.Concrete;
 using ExpenseFlow.Data.Context;
 using ExpenseFlow.DataAccess.Abstract;
 using ExpenseFlow.DataAccess.Concrete;
 using ExpenseFlow.Entity;
-using ExpenseFlow.WebUI;
-using ExpenseFlow.WebUI.Hubs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,6 +34,7 @@ builder.Services.AddScoped<IExpenseService, ExpenseService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 //SignalR
 builder.Services.AddSignalR();
@@ -53,6 +52,7 @@ builder.Services.AddScoped<IExpenseDal, ExpenseDal>();
 builder.Services.AddScoped<ICategoryDal, CategoryDal>();
 builder.Services.AddScoped<IDepartmentDal, DepartmentDal>();
 builder.Services.AddScoped<IUserDal, UserDal>();
+builder.Services.AddScoped<INotificationDal, NotificationDal>();
 
 
 #endregion

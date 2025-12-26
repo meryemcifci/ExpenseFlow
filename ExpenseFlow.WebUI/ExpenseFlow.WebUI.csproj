@@ -18,6 +18,7 @@
     <PackageReference Include="Microsoft.AspNet.Identity.Core" Version="2.2.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.22" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.22" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.22">
       <PrivateAssets>all</PrivateAssets>
@@ -33,6 +34,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ExpenseFlow.Business\ExpenseFlow.Business.csproj" />
+    <ProjectReference Include="..\ExpenseFlow.Core\ExpenseFlow.Core.csproj" />
     <ProjectReference Include="..\ExpenseFlow.Data\ExpenseFlow.Data.csproj" />
     <ProjectReference Include="..\ExpenseFlow.Entity\ExpenseFlow.Entity.csproj" />
   </ItemGroup>

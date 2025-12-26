@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ExpenseFlow.Core\ExpenseFlow.Core.csproj" />
     <ProjectReference Include="..\ExpenseFlow.Data\ExpenseFlow.Data.csproj" />
     <ProjectReference Include="..\ExpenseFlow.Entity\ExpenseFlow.Entity.csproj" />
   </ItemGroup>

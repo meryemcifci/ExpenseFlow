@@ -122,10 +122,7 @@
 
                         <!-- Bildirim Zili -->
                         <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link" asp-controller="Accountant" asp-action="Index" id="notificationLink">
-                                <i class="fas fa-bell fa-fw"></i>
-                                <span id="notificationCount" class="badge badge-danger badge-counter">0</span>
-                            </a>
+                            @await Component.InvokeAsync("Notification")
                         </li>
 
                         <div class="topbar-divider d-none d-sm-block"></div>
@@ -169,6 +166,10 @@
     <script src="~/template/admin/startbootstrap-sb-admin-2-gh-pages/startbootstrap-sb-admin-2-gh-pages/js/sb-admin-2.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <script src="~/js/signalR.js"></script>
+
+    <script src="~/js/notification.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 

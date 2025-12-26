@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36623.8 d17.14
+VisualStudioVersion = 17.14.36623.8
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpenseFlow.Entity", "ExpenseFlow.Entity\ExpenseFlow.Entity.csproj", "{C001663A-98F2-48F0-825E-22283CE57A1F}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpenseFlow.Business", "ExpenseFlow.Business\ExpenseFlow.Business.csproj", "{2434AF8F-6935-404B-B6EF-E0616D304F9A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpenseFlow.WebUI", "ExpenseFlow.WebUI\ExpenseFlow.WebUI.csproj", "{AF49EC6E-1459-4CF6-B2C4-1B78A0AC4BD5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpenseFlow.Core", "ExpenseFlow.Core\ExpenseFlow.Core.csproj", "{EC0F084A-2F53-4E5A-A0E9-2AFE4EFBB20E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{AF49EC6E-1459-4CF6-B2C4-1B78A0AC4BD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF49EC6E-1459-4CF6-B2C4-1B78A0AC4BD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF49EC6E-1459-4CF6-B2C4-1B78A0AC4BD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC0F084A-2F53-4E5A-A0E9-2AFE4EFBB20E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC0F084A-2F53-4E5A-A0E9-2AFE4EFBB20E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC0F084A-2F53-4E5A-A0E9-2AFE4EFBB20E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC0F084A-2F53-4E5A-A0E9-2AFE4EFBB20E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
