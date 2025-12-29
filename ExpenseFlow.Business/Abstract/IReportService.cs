@@ -1,0 +1,12 @@
+﻿using ExpenseFlow.Entity;
+
+namespace ExpenseFlow.Business.Abstract
+{
+    public interface IReportService
+    {
+        Task<byte[]> GenerateUserExpensePdfAsync(int userId, string logoPath);
+
+        Task<byte[]> GenerateUserExpenseExcelAsync(int userId, string logoPath);
+    }
+
+}

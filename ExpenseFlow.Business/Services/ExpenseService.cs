@@ -42,6 +42,16 @@ namespace ExpenseFlow.Business.Services
             return _expenseDal.GetRejectWithCategory();
         }
 
+        public decimal TotalPaidAmount(int userId)
+        {
+            return _expenseDal.TotalPaidAmount(userId);
+        }
+
+        public decimal TotalPendingAmount(int userId)
+        {
+            return _expenseDal.TotalPendingAmount(userId);
+        }
+
         public void TDelete(int id)
         {
             throw new NotImplementedException();
@@ -66,6 +76,11 @@ namespace ExpenseFlow.Business.Services
            
         }
 
+        public decimal TotalAmount(int userId)
+        {
+            return _expenseDal.TotalAmount(userId);
+        }
+
         public void TUpdate(Expense expense)
         {
             _expenseDal.Update(expense);
@@ -76,5 +91,38 @@ namespace ExpenseFlow.Business.Services
             await _expenseDal.UpdatePaymentStatusAsync(expenseId, status);
         }
 
+
+        public List<int> GetMonthlyExpenseCounts(int userId)
+        {
+            return _expenseDal.GetMonthlyExpenseCounts(userId);
+        }
+
+        public List<int> GetWeeklyExpenseCounts(int userId)
+        {
+            return _expenseDal.GetWeeklyExpenseCounts(userId);
+
+        }
+
+        public decimal GetPaidAmount(int userId)
+        {
+            return _expenseDal.GetTotalAmountByPaymentStatus(userId, PaymentStatus.Paid);
+        }
+
+        public decimal GetPendingAmount(int userId)
+        {
+            return _expenseDal.GetTotalAmountByPaymentStatus(userId, PaymentStatus.Pending);
+        }
+
+        public decimal GetRejectedAmount(int userId)
+        {
+            return _expenseDal.GetTotalAmountByExpenseStatus(userId, ExpenseStatus.Rejected);
+        }
+        public List<(string CategoryName, decimal TotalAmount)> GetExpenseAmountsByCategory(int userId)
+        {
+            return _expenseDal.GetTotalAmountByCategory(userId);
+        }
+
     }
+
+
 }

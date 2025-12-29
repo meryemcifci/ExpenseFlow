@@ -19,23 +19,42 @@ namespace ExpenseFlow.WebUI.Controllers
         private readonly IExpenseService _expenseService;
         private readonly IWebHostEnvironment _env;
         private readonly ICategoryService _categoryService;
-        private readonly IHubContext<NotificationHub> _notificationHub;
         private readonly INotificationService _notificationService;
 
 
-        public EmployeeController(ILogger<EmployeeController> logger,  IExpenseService expenseService, IWebHostEnvironment env, ICategoryService categoryService, IHubContext<NotificationHub> notificationHub, INotificationService notificationService)
+        public EmployeeController(ILogger<EmployeeController> logger,  IExpenseService expenseService, IWebHostEnvironment env, ICategoryService categoryService, INotificationService notificationService)
         {
 
             _logger = logger;
             _expenseService = expenseService;
             _env = env;
             _categoryService = categoryService;
-            _notificationHub = notificationHub;
             _notificationService = notificationService;
         }
+
         //Dashboard
-        public IActionResult Index()
+        public IActionResult Dashboard()
         {
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value);
+            var totalAmount = _expenseService.TotalAmount(userId);
+            var paidAmount= _expenseService.TotalPaidAmount(userId);
+            var pendingAmount = _expenseService.TotalPendingAmount(userId);
+
+            ViewBag.MonthlyExpense = _expenseService.GetMonthlyExpenseCounts(userId);
+            ViewBag.WeeklyExpense = _expenseService.GetWeeklyExpenseCounts(userId);
+
+            ViewBag.PaidAmount = _expenseService.GetPaidAmount(userId);
+            ViewBag.PendingAmount = _expenseService.GetPendingAmount(userId);
+            ViewBag.RejectedAmount = _expenseService.GetRejectedAmount(userId);
+
+            var categoryData = _expenseService.GetExpenseAmountsByCategory(userId);
+            ViewBag.CategoryNames = categoryData.Select(x => x.CategoryName).ToList();
+            ViewBag.CategoryAmounts = categoryData.Select(x => x.TotalAmount).ToList();
+
+
+            ViewData["TotalAmount"] = totalAmount;
+            ViewData["PaidAmount"] = paidAmount;
+            ViewData["PendingAmount"]=pendingAmount;
             return View();
         }
         //masraflarım buradan görüntülenecek
