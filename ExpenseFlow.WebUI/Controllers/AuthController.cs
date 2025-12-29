@@ -262,7 +262,7 @@ namespace ExpenseFlow.WebUI.Controllers
                 }
 
                 _logger.LogInformation($"ExpenseFlow_log Auth/Login post email: {user.Email} giriş yaptı!");
-                return RedirectToAction("Index", "Employee");
+                return RedirectToAction("Dashboard", "Employee");
 
 
             }

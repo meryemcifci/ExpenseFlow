@@ -19,7 +19,20 @@ namespace ExpenseFlow.Business.Abstract
         Task UpdatePaymentStatusAsync(int expenseId, PaymentStatus status);
         List<Expense> GetApprovedExpenses();
 
+        decimal TotalAmount(int userId);
 
+        decimal TotalPaidAmount(int userId);
+
+        decimal TotalPendingAmount(int userId);
+
+        List<int> GetMonthlyExpenseCounts(int userId);
+
+        List<int> GetWeeklyExpenseCounts(int userId);
+
+        decimal GetPaidAmount(int userId);
+        decimal GetPendingAmount(int userId);
+        decimal GetRejectedAmount(int userId);
+        List<(string CategoryName, decimal TotalAmount)> GetExpenseAmountsByCategory(int userId);
 
     }
 }

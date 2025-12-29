@@ -36,6 +36,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 
 // WebUI içinde bulunan arayüz için hazırlanan servis
 builder.Services.AddScoped<INotificationPublisher, SignalRNotificationPublisher>();
@@ -57,6 +58,7 @@ builder.Services.AddScoped<ICategoryDal, CategoryDal>();
 builder.Services.AddScoped<IDepartmentDal, DepartmentDal>();
 builder.Services.AddScoped<IUserDal, UserDal>();
 builder.Services.AddScoped<INotificationDal, NotificationDal>();
+builder.Services.AddScoped<IReportDal, ReportDal>();
 
 
 #endregion

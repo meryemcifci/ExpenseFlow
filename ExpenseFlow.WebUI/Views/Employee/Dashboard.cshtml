@@ -1,0 +1,194 @@
+﻿@using System.Text.Json
+
+
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+
+@* bu sayfada ne olacak
+🆗 1-kullanıcının aylık ve haftalık masraf grafiği gösterilecek.
+🆗 2-kullanıcının ödenen, onaylanan, reddedilen, beklemede olan masraflarını pdf ve excel olarak indirme butonları olacak.
+🆗 3-grafik ile masraf ödeme, onay, red oranları gösterilecek.
+🆗 4-(Stats Cards):Bu Ay Toplam Masraf (₺)
+                Ödenen Toplam Tutar
+                Bekleyen Toplam Tutar
+                Ortalama Masraf
+ 🆗 5- Kategori bazlı harcama grafiği
+*@
+
+@section HeaderCards {
+    @* 4.madde *@
+    <div class="row">
+
+        <!-- Toplam Masraf Tutarı -->
+        <div class="col-xl-4 col-lg-6 mb-4">
+            <div class="card card-stats">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title text-uppercase text-muted mb-0">Toplam Harcama Tutarı</h5>
+                            <span class="h2 font-weight-bold mb-0">&#8378;@ViewData["TotalAmount"]</span>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon icon-shape bg-success text-white rounded-circle shadow">
+                                <i class="fas fa-check"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ödenen Toplam Tutar -->
+        <div class="col-xl-4 col-lg-6 mb-4">
+            <div class="card card-stats">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title text-uppercase text-muted mb-0">Ödenen Toplam Tutar</h5>
+                            <span class="h2 font-weight-bold mb-0">&#8378;@ViewData["PaidAmount"]</span>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon icon-shape bg-warning text-white rounded-circle shadow">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--  Bekleyen Toplam Tutar -->
+        <div class="col-xl-4 col-lg-6 mb-4">
+            <div class="card card-stats">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title text-uppercase text-muted mb-0">Bekleyen Toplam Tutar</h5>
+                            <span class="h2 font-weight-bold mb-0">&#8378;@ViewData["PendingAmount"]</span>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon icon-shape bg-danger text-white rounded-circle shadow">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+}
+
+<div class="container-fluid mt--7">
+    <div class="row">
+       @*  1.madde *@
+        <div class="col-xl-8 mb-5 mb-xl-0">
+            <div class="card bg-gradient-default shadow">
+                <div class="card-header bg-transparent">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h6 class="text-uppercase text-light ls-1 mb-1">Genel Bakış</h6>
+                            <h2 class="text-white mb-0">Harcama İstatistikleri</h2>
+                        </div>
+                        <div class="col">
+                            <ul class="nav nav-pills justify-content-end">
+                                <li class="nav-item mr-2">
+                                    <a href="#" class="nav-link py-2 px-3 active" id="btnMonth">
+                                        <span class="d-none d-md-block">Ay</span>
+                                        <span class="d-md-none">M</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link py-2 px-3" id="btnWeek">
+                                        <span class="d-none d-md-block">Hafta</span>
+                                        <span class="d-md-none">W</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="chart">
+                        <canvas id="chart-sales" class="chart-canvas" style="height:350px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*  3.madde *@
+        <div class="col-xl-4">
+            <div class="card shadow">
+                <div class="card-header bg-transparent">
+                    <h6 class="text-uppercase text-muted ls-1 mb-1">Performans</h6>
+                    <h2 class="mb-0">Durum Dağılımı</h2>
+                </div>
+                <div class="card-body">
+                    <canvas id="chart-orders" style="height:350px;"></canvas>
+
+                    <div id="status-distribution-data"
+                         data-paid="@ViewBag.PaidAmount"
+                         data-pending="@ViewBag.PendingAmount"
+                         data-rejected="@ViewBag.RejectedAmount">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   @*  2.madde *@
+
+    <div class="row mt-5">
+        <div class="col-xl-12">
+            <div class="card shadow">
+                <div class="card-header bg-transparent">
+                    <h6 class="text-uppercase text-muted ls-1 mb-1">Analiz</h6>
+                    <h2 class="mb-0">
+                        Kategoriye Göre Harcama (₺)
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <canvas id="chart-category" style="height:350px;"></canvas>
+
+                    <div id="category-chart-data"
+                         data-labels='@Html.Raw(JsonSerializer.Serialize(ViewBag.CategoryNames))'
+                         data-values='@Html.Raw(JsonSerializer.Serialize(ViewBag.CategoryAmounts))'>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col">
+            <div class="card shadow">
+                <div class="card-header border-0">
+                    <h3 class="mb-0">Masraf Raporları</h3>
+                </div>
+                <div class="card-body">
+                    <a asp-controller="Report"
+                       asp-action="DownloadUserExpensePdf"
+                       class="btn btn-primary">
+                        PDF Olarak İndir
+                    </a>
+
+                    <a asp-controller="Report"
+                       asp-action="DownloadUserExpenseExcel"
+                       class="btn btn-success">
+                        Excel Olarak İndir
+                    </a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+@* chart.js verilerini almak için kullanılan gizli div *@
+<div id="expense-chart-data"
+     data-monthly='@Html.Raw(System.Text.Json.JsonSerializer.Serialize((List<int>)ViewBag.MonthlyExpense))'
+     data-weekly='@Html.Raw(System.Text.Json.JsonSerializer.Serialize((List<int>)ViewBag.WeeklyExpense))'>
+</div>
+

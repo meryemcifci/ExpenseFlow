@@ -2,6 +2,8 @@
 using ExpenseFlow.Data.Context;
 using ExpenseFlow.Entity;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ExpenseFlow.Data.Concrete
 {
@@ -19,7 +21,7 @@ namespace ExpenseFlow.Data.Concrete
         {
             try
             {
-                var expense= _context.Expenses.Find(id);
+                var expense = _context.Expenses.Find(id);
                 _context.Expenses.Remove(expense);
                 _context.SaveChanges();
 
@@ -77,11 +79,11 @@ namespace ExpenseFlow.Data.Concrete
         {
             try
             {
-               _context.Expenses.Add(expense);
+                _context.Expenses.Add(expense);
                 _context.SaveChanges();
 
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
                 Console.WriteLine("Masraf ekleme işlemi sırasında bir hata oluştu. Tekrar deneyiniz.");
                 throw;
@@ -139,6 +141,113 @@ namespace ExpenseFlow.Data.Concrete
             .Where(e => e.Status == ExpenseStatus.Approved)
             .OrderByDescending(e => e.Date)
             .ToList();
+        }
+
+        public decimal TotalAmount(int userId)
+        {
+            return _context.Expenses
+              .Where(e => e.UserId == userId)
+              .Sum(e => e.Amount);
+
+        }
+
+        public decimal TotalPaidAmount(int userId)
+        {
+            return _context.Expenses
+               .Where(x =>
+                   x.UserId == userId &&
+                   x.PaymentStatus == PaymentStatus.Paid)
+               .Select(x => (decimal?)x.Amount)
+               .Sum() ?? 0;
+        }
+
+        public decimal TotalPendingAmount(int userId)
+        {
+            return _context.Expenses
+              .Where(x =>
+                  x.UserId == userId &&
+                  x.PaymentStatus == PaymentStatus.Pending)
+              .Select(x => (decimal?)x.Amount)
+              .Sum() ?? 0;
+        }
+
+        public List<int> GetMonthlyExpenseCounts(int userId)
+        {
+            var result = new List<int>();
+            var year = DateTime.Now.Year;
+            for (int month = 1; month <= 12; month++)
+            {
+                var startDate = new DateTime(year, month, 1);
+                var endDate = startDate.AddMonths(1);
+                var count = _context.Expenses
+                  .Where(x =>
+                      x.UserId == userId &&
+                      x.Date >= startDate &&
+                      x.Date < endDate)
+                  .Count();
+                result.Add(count);
+
+            }
+            return result;
+            
+
+        }
+
+
+        public List<int> GetWeeklyExpenseCounts(int userId)
+        {
+            var result = new List<int>();
+            var now = DateTime.Now;
+            var startOfMonth = new DateTime(now.Year, now.Month, 1);
+            var endOfMonth = startOfMonth.AddMonths(1);
+            var currentStart = startOfMonth;
+
+            while (currentStart < endOfMonth)
+            {
+                var currentEnd = currentStart.AddDays(7);
+
+                var count = _context.Expenses
+                    .Where(x =>
+                        x.UserId == userId &&
+                        x.Date >= currentStart &&
+                        x.Date < currentEnd)
+                    .Count();
+
+                result.Add(count);
+
+                currentStart = currentEnd;
+            }
+
+            return result;
+        }
+
+        public decimal GetTotalAmountByPaymentStatus(int userId, PaymentStatus paymentStatus)
+        {
+            return _context.Expenses
+               .Where(x => x.UserId == userId && x.PaymentStatus == paymentStatus)
+               .Sum(x => (decimal?)x.Amount) ?? 0;
+        }
+
+        public decimal GetTotalAmountByExpenseStatus(int userId, ExpenseStatus expenseStatus)
+        {
+            return _context.Expenses
+               .Where(x => x.UserId == userId && x.Status == expenseStatus)
+               .Sum(x => (decimal?)x.Amount) ?? 0;
+        }
+
+        public List<(string CategoryName, decimal TotalAmount)> GetTotalAmountByCategory(int userId)
+        {
+            return _context.Expenses
+                .Where(x => x.UserId == userId)
+                .GroupBy(x => x.Category.Name)
+                .Select(g => new
+                {
+                    CategoryName = g.Key,
+                    TotalAmount = g.Sum(x => x.Amount)
+                })
+                .AsEnumerable()
+                .Select(x => (x.CategoryName, x.TotalAmount))
+                .ToList();
         }
     }
 }
