@@ -6,14 +6,42 @@
     ViewData["Title"] = "MyExpenses";
     Layout = "~/Views/Shared/_LayoutUser.cshtml";
 }
+<style>
+    .equal-height-card {
+        height: 120px;
+        display: flex;
+        align-items: center;
+    }
 
+</style>
 
 @section HeaderCards {
     <div class="row">
 
+        <!-- Ödenen -->
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-4">
+            <div class="card card-stats equal-height-card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title text-uppercase text-muted mb-0">Ödenen Masraflar</h5>
+                            <span class="h2 font-weight-bold mb-0">@Model.PaidCount</span>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon icon-shape bg-success text-white rounded-circle shadow">
+                                <i class="fas fa-money-bill-wave"></i>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Onaylanan -->
-        <div class="col-xl-4 col-lg-6 mb-4">
-            <div class="card card-stats">
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-4">
+            <div class="card card-stats equal-height-card">
                 <div class="card-body">
                     <div class="row">
                         <div class="col">
@@ -31,8 +59,8 @@
         </div>
 
         <!-- Bekleyen -->
-        <div class="col-xl-4 col-lg-6 mb-4">
-            <div class="card card-stats">
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-4">
+            <div class="card card-stats equal-height-card">
                 <div class="card-body">
                     <div class="row">
                         <div class="col">
@@ -50,8 +78,8 @@
         </div>
 
         <!-- Reddedilen -->
-        <div class="col-xl-4 col-lg-6 mb-4">
-            <div class="card card-stats">
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-4">
+            <div class="card card-stats equal-height-card">
                 <div class="card-body">
                     <div class="row">
                         <div class="col">

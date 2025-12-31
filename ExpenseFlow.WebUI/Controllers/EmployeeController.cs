@@ -77,7 +77,9 @@ namespace ExpenseFlow.WebUI.Controllers
                     Expenses = expenses,
                     ApprovedCount = expenses.Count(x => x.Status == ExpenseStatus.Approved),
                     PendingCount = expenses.Count(x => x.Status == ExpenseStatus.Pending),
-                    RejectedCount = expenses.Count(x => x.Status == ExpenseStatus.Rejected)
+                    RejectedCount = expenses.Count(x => x.Status == ExpenseStatus.Rejected),
+                    PaidCount = expenses.Count(x => x.PaymentStatus == PaymentStatus.Paid)
+
                 };
 
                 return View(model);
