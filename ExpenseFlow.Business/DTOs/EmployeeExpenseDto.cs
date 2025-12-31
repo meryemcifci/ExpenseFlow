@@ -9,5 +9,6 @@ namespace ExpenseFlow.Business.DTOs
         public int ApprovedCount { get; set; }
         public int PendingCount { get; set; }
         public int RejectedCount { get; set; }
+        public int PaidCount { get; set; }
     }
 }
