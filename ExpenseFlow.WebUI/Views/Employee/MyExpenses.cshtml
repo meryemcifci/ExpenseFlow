@@ -129,7 +129,13 @@
                                     <td>@item.Amount ₺</td>
 
                                     <td>
-                                        @if (item.Status == ExpenseStatus.Approved)
+                                        @if (item.Status == ExpenseStatus.Approved && item.PaymentStatus==PaymentStatus.Paid)
+                                        {
+                                            <span class="badge badge-dot">
+                                                <i class="bg-success"></i> Ödendi
+                                            </span>
+                                        }
+                                        else if (item.Status == ExpenseStatus.Approved)
                                         {
                                             <span class="badge badge-dot">
                                                 <i class="bg-success"></i> Onaylandı
