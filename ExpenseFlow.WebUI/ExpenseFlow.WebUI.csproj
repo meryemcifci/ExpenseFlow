@@ -41,4 +41,9 @@
     <ProjectReference Include="..\ExpenseFlow.Entity\ExpenseFlow.Entity.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\uploads\expenses\" />
+    <Folder Include="wwwroot\uploads\profile\" />
+  </ItemGroup>
+
 </Project>

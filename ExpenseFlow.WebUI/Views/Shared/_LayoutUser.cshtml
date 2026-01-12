@@ -1,4 +1,11 @@
 ﻿@using System.Text.Json
+
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -70,11 +77,14 @@
     <div class="main-content">
        @*  <li class="nav-item dropdown">
             @await Component.InvokeAsync("Notification")
-        </li> *@
-
-        <nav class="navbar navbar-top navbar-expand-md navbar-dark" id="navbar-main">
-            <div class="container-fluid">
-                <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="/">@ViewData["Title"]</a>
+            </li> 
+       *@
+      @*  profil sayfası için headeri devre dışı bıraktım *@
+        @if (!(controller == "Employee" && action == "Profile"))
+        {
+            <nav class="navbar navbar-top navbar-expand-md navbar-dark" id="navbar-main">
+                <div class="container-fluid">
+                <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="/"></a>
 
                 <ul class="navbar-nav align-items-center d-none d-md-flex">
                     <li class="nav-item dropdown">
@@ -92,10 +102,11 @@
                             <div class=" dropdown-header noti-title">
                                 <h6 class="text-overflow m-0">Hoşgeldiniz!</h6>
                             </div>
-                            <a href="#" class="dropdown-item">
-                                <i class="ni ni-single-02"></i>
-                                <span>Profilim</span>
+                           
+                            <a asp-controller="Employee" asp-action="Profile" class="dropdown-item">
+                                <i class="ni ni-single-02"></i>   Profilim
                             </a>
+                           
                             <div class="dropdown-divider"></div>
                             <a href="#" class="dropdown-item">
                                 <i class="ni ni-user-run"></i>
@@ -106,16 +117,31 @@
                 </ul>
             </div>
         </nav>
-        <div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
-            <div class="container-fluid">
-                <div class="header-body">
-                    @await RenderSectionAsync("HeaderCards", required: false)
+        }
+
+        @if (IsSectionDefined("HeaderCards"))
+        {
+            <div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
+                <div class="container-fluid">
+                    <div class="header-body">
+                        @RenderSection("HeaderCards", required: false)
+                    </div>
                 </div>
             </div>
-        </div>
+        }
 
-        <div class="container-fluid mt--7">
-            @RenderBody()
+        @if (controller == "Employee" && action == "Profile")
+        {
+            <div class="container-fluid">
+                @RenderBody()
+            </div>
+        }
+        else
+        {
+            <div class="container-fluid mt--7">
+                @RenderBody()
+            </div>
+        }
 
             <footer class="footer">
                 <div class="row align-items-center justify-content-xl-between">
@@ -126,8 +152,8 @@
                     </div> 
                 </div>
             </footer>
-        </div>
     </div>
+    
 
     <script src="~/template/user/argon-dashboard-master/argon-dashboard-master/assets/js/plugins/jquery/dist/jquery.min.js"></script>
     <script src="~/template/user/argon-dashboard-master/argon-dashboard-master/assets/js/plugins/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -141,6 +167,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="~/js/chart.js"></script>
+    <script src="~/js/address.js"></script>
+    <script src="~/js/modalProfile.js"></script>
 
 
 

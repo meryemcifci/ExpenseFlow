@@ -1,0 +1,373 @@
+﻿@model UserProfileViewModel
+
+
+@{
+    ViewData["Title"] = "Profilim";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+<!-- HEADER -->
+<div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center"
+     style="min-height: 600px;
+            background-image: url(' @(Model.ProfileImageUrl ?? "~/template/user/argon-dashboard-master/argon-dashboard-master/assets/img/theme/profile-cover.jpg")');
+            background-size: cover;
+            background-position: center center;
+            position: relative;">
+
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0, 0, 0, 0.3);"></div>
+
+    
+    <span class="mask bg-gradient-default opacity-8"></span>
+
+    <div class="container-fluid d-flex align-items-center" style="position: relative; z-index: 1;">
+        <div class="row">
+            <div class="col-lg-7 col-md-10">
+                <h1 class="display-2 text-white">Merhaba @Model.FirstName</h1>
+                <p class="text-white mt-0 mb-5">
+                    @Model.AboutMe
+                </p>
+                <button class="btn btn-info" data-toggle="modal" data-target="#editProfileModal">
+                    Profili Düzenle
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- PAGE CONTENT -->
+<div class="container-fluid mt--7">
+    <div class="row">
+
+        <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
+            <div class="card card-profile shadow">
+
+                <!-- PROFİL FOTO -->
+                <div class="row justify-content-center">
+                    <div class="col-lg-3 order-lg-2">
+                        <div class="card-profile-image">
+                            <img src="@(Model.ProfileImageUrl ?? "~/template/user/argon-dashboard-master/argon-dashboard-master/assets/img/theme/profile-cover.jpg")"
+                                 class="rounded-circle"
+                                 alt="@Model.FirstName @Model.LastName"
+                                 style="width:180px;height:180px;object-fit:cover;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- İSTATİSTİKLER -->
+                <div class="card-body pt-0 pt-md-4">
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="card-profile-stats d-flex justify-content-center mt-md-5">
+
+                                <div>
+                                    <span class="heading">@ViewData["TotalAmount"]</span>
+                                    <span class="description">Toplam Harcama</span>
+                                </div>
+
+                                <div>
+                                    <span class="heading">@ViewData["PendingAmount"]</span>
+                                    <span class="description">Bekleyen</span>
+                                </div>
+
+                                <div>
+                                    <span class="heading">@ViewData["PaidAmount"]</span>
+                                    <span class="description">Ödenen</span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KULLANICI BİLGİ -->
+                    <div class="text-center mt-4">
+                        <h3>
+                            @Model.FirstName @Model.LastName
+                        </h3>
+
+                        <div class="h5 font-weight-300">
+                            <i class="ni location_pin mr-2"></i>
+                            @Model.City, @Model.Country
+                        </div>
+
+                        <div class="mt-3">
+                            <i class="ni education_hat mr-2"></i>
+                            @Model.DepartmentName
+                        </div>
+
+                        <!-- FOTOĞRAF GÜNCELLE -->
+                        <div class="mt-4">
+                            <button class="btn btn-info btn-sm"
+                                    data-toggle="modal"
+                                    data-target="#editPhotoModal">
+                                Fotoğrafı Güncelle
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- PROFILE FORM -->
+        <div class="col-xl-8 order-xl-1">
+            <div class="card bg-secondary shadow">
+                <div class="card-header bg-white border-0">
+                    <h3 class="mb-0">Hesap Bilgileri</h3>
+                </div>
+
+                <div class="card-body">
+                    <form  method="post">
+
+                        <input type="hidden" name="UserId" value="@Model.UserId" />
+
+                        <h6 class="heading-small text-muted mb-4">Kullanıcı Bilgileri</h6>
+
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label>Ad</label>
+                                    <input type="text"
+                                           name="FirstName"
+                                           value="@Model.FirstName"
+                                           disabled @*  readonly ve disabled farkını uıda görmek istedim ondan böyle *@
+                                           class="form-control" />
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <label>Soyad</label>
+                                    <input type="text"
+                                           name="LastName"
+                                           value="@Model.LastName"
+                                           readonly
+                                           class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-lg-6">
+                                    <label>Email</label>
+                                    <input type="email"
+                                           value="@Model.Email"
+                                           readonly
+                                           class="form-control" />
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <label>Kullanıcı Adı</label>
+                                    <input type="text"
+                                           value="@Model.UserName"
+                                           readonly
+                                           class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <h6 class="heading-small text-muted mb-4">Adres Bilgileri</h6>
+
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>Adres</label>
+                                    <input type="text"
+                                           name="Address"
+                                           value="@Model.Address"
+                                           readonly
+                                           class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-lg-6">
+                                    <label>İl</label>
+                                    <input type="text"
+                                           name="City"
+                                           readonly
+                                           value="@Model.City"
+                                           class="form-control" />
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <label>Ülke</label>
+                                    <input type="text"
+                                           name="Country"
+                                           value="@Model.Country"
+                                           readonly
+                                           class="form-control" />
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <label>İlçe</label>
+                                    <input type="text"
+                                           name="District"
+                                           value="@Model.District"
+                                           readonly
+                                           class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+<!-- EDIT PROFILE MODAL -->
+<div class="modal fade" id="editProfileModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <form asp-action="UpdateProfile"
+                  asp-controller="Employee"
+                  method="post"
+                  class="needs-validation"
+                  novalidate>
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Profili Düzenle</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+
+                <input type="hidden" name="UserId" value="@Model.UserId" />
+
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label>Hakkınızda</label>
+                        <textarea name="AboutMe"
+                                  class="form-control"
+                                  rows="3"
+                                  required>@Model.AboutMe</textarea>
+                        <div class="invalid-feedback">
+                            Bu alan boş bırakılamaz.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ülke</label>
+                        <select id="countrySelect"
+                                name="Country"
+                                class="form-control"
+                                required>
+                            <option value="">Ülke Seçiniz</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Lütfen bir ülke seçiniz.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Şehir</label>
+                        <select id="citySelect"
+                                name="City"
+                                class="form-control"
+                                required>
+                            <option value="">Şehir seçiniz</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Lütfen bir şehir seçiniz.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>İlçe</label>
+                        <input type="text"
+                               name="District"
+                               value="@Model.District"
+                               class="form-control"
+                               placeholder="İlçe giriniz"
+                               required />
+                        <div class="invalid-feedback">
+                            İlçe alanı boş bırakılamaz.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Adres</label>
+                        <input type="text"
+                               name="Address"
+                               value="@Model.Address"
+                               class="form-control"
+                               placeholder="Açık adres giriniz"
+                               required />
+                        <div class="invalid-feedback">
+                            Adres alanı boş bırakılamaz.
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="submit">Kaydet</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- EDIT PHOTO MODAL -->
+<div class="modal fade" id="editPhotoModal" tabindex="-1">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content">
+
+            <form asp-action="UpdateProfilePhoto"
+                  asp-controller="Employee"
+                  method="post"
+                  enctype="multipart/form-data"
+                  class="needs-validation"
+                  novalidate>
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Profil Fotoğrafını Güncelle</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+
+                <input type="hidden" name="UserId" value="@Model.UserId" />
+
+                <div class="modal-body text-center">
+
+                    <img src="@(Model.ProfileImageUrl ?? "~/template/user/argon-dashboard-master/argon-dashboard-master/assets/img/theme/profile-cover.jpg")"
+                         class="rounded-circle mb-3"
+                         style="width:120px;height:120px;object-fit:cover;" />
+
+                    <div class="form-group">
+                        <input type="file"
+                               name="ProfileImage"
+                               class="form-control"
+                               accept="image/*"
+                               required />
+                        <div class="invalid-feedback">
+                            Lütfen bir fotoğraf seçiniz.
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-info" type="submit">
+                        Fotoğrafı Güncelle
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
