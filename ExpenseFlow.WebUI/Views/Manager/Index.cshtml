@@ -1,0 +1,199 @@
+﻿@model List<ExpenseFlow.Core.ViewModels.ExpenseListViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+
+
+<div class="container-fluid">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Departman Paneli</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Bekleyen Onaylar</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.PendingCount</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Aylık Toplam (Onaylanan)</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.MonthlyTotal ₺</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-lira-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (ViewBag.CategoryCounts != null)
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-chart-pie mr-2"></i>Kategoriye Göre Masraf Sayıları</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @{
+                                var categoryCounts = ViewBag.CategoryCounts as Dictionary<string, int>;
+                            }
+                            @if (categoryCounts != null && categoryCounts.Any())
+                            {
+                                @foreach (var category in categoryCounts)
+                                {
+                                    <div class="col-xl-3 col-md-6 mb-3">
+                                        <div class="card border-left-info shadow h-100 py-2">
+                                            <div class="card-body">
+                                                <div class="row no-gutters align-items-center">
+                                                    <div class="col mr-2">
+                                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">@category.Key</div>
+                                                        <div class="h5 mb-0 font-weight-bold text-gray-800">@category.Value Adet</div>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <i class="fas fa-tag fa-2x text-gray-300"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="col-12">
+                                    <p class="text-muted">Henüz kategoriye göre masraf bulunmamaktadır.</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-filter mr-2"></i>Filtreleme Paneli</h6>
+        </div>
+        <div class="card-body">
+            <form method="get" asp-action="Index" class="row g-3 align-items-end">
+                <div class="col-md-2">
+                    <label class="small mb-1">Çalışan Seç</label>
+                    <select name="employeeId" class="form-control" asp-items="ViewBag.Employees">
+                        <option value="Çalışanlar"></option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="small mb-1">Kategori</label>
+                    <select name="categoryId" class="form-control" asp-items="ViewBag.Categories">
+                        <option value="">Tüm Kategoriler</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="small mb-1">Kayıt Tarihi</label>
+                    <input type="date" name="startDate" class="form-control" value="@ViewContext.HttpContext.Request.Query["startDate"]">
+                </div>
+                @* <div class="col-md-2">
+                    <label class="small mb-1">Bitiş Tarihi</label>
+                    <input type="date" name="endDate" class="form-control" value="@ViewContext.HttpContext.Request.Query["endDate"]">
+                </div> *@
+                <div class="col-md-2">
+                    <label class="small mb-1">Durum</label>
+                    @{
+                        var statusValue = ViewContext.HttpContext.Request.Query["status"].ToString();
+                    }
+                    <select name="status" class="form-control">
+                        <option value="">Hepsi</option>
+                        <option value="1" selected="@(statusValue == "1")">Beklemede</option>
+                        <option value="2" selected="@(statusValue == "2")">Onaylandı</option>
+                        <option value="3" selected="@(statusValue == "3")">Reddedildi</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary btn-icon-split">
+                        <span class="icon text-white-50"><i class="fas fa-search"></i></span>
+                        <span class="text">Uygula</span>
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary btn-icon-split mt-2">
+                        <span class="icon text-white-50"><i class="fas fa-undo"></i></span>
+                        <span class="text">Sıfırla</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Harcama Kayıtları</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Çalışan</th>
+                            <th>Tarih</th>
+                            <th>Kategori</th>
+                            <th>Tutar</th>
+                            <th>Durum</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.EmployeeName</td>
+                                <td>@item.Date.ToShortDateString()</td>
+                                <td>@item.CategoryName</td>
+                                <td>@item.Amount ₺</td>
+                                <td>
+                                    @if (item.Status == 1)
+                                    {
+                                        <span class="badge badge-warning">Beklemede</span>
+                                    }
+                                    else if (item.Status == 2)
+                                    {
+
+                                        <span class="badge badge-success">Onaylandı</span>
+                                    }
+                                    else
+                                    {
+
+                                        <span class="badge badge-danger">Reddedildi</span>
+                                    }
+                                </td>
+                                
+                            </tr>
+                        }
+     
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

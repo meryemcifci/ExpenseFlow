@@ -1,5 +1,7 @@
 ﻿using ExpenseFlow.Business.Abstract;
+using ExpenseFlow.Core.ViewModels;
 using ExpenseFlow.Data.Abstract;
+using ExpenseFlow.Data.Concrete;
 using ExpenseFlow.Entity;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,13 +15,12 @@ namespace ExpenseFlow.Business.Services
     public class ExpenseService : IExpenseService
     {
         private readonly IExpenseDal _expenseDal;
-    
+        private readonly IUserDal _userDal;
 
-        public ExpenseService( IExpenseDal expenseDal)
+        public ExpenseService(IExpenseDal expenseDal, IUserDal userDal)
         {
-           
             _expenseDal = expenseDal;
-
+            _userDal = userDal;
         }
 
         public List<Expense> GetApprovedExpenses()
@@ -122,6 +123,34 @@ namespace ExpenseFlow.Business.Services
             return _expenseDal.GetTotalAmountByCategory(userId);
         }
 
+       
+
+        public async Task<Dictionary<string, int>> GetExpenseCountsByCategoryAsync(int managerId)
+        {
+            var manager = await _userDal.GetByIdAsync(managerId);
+            int deptId = manager.DepartmentId;
+            return await _expenseDal.GetExpenseCountsByCategoryAsync(deptId);
+        }
+
+        public async Task<List<ExpenseListViewModel>> GetDashboardExpensesAsync(int? employeeId, DateTime? start, DateTime? end, int? status, int? categoryId, int managerId)
+        {
+            var manager = await _userDal.GetByIdAsync(managerId);
+            int deptId = manager.DepartmentId;
+
+            var expenses = await _expenseDal.GetFilteredExpensesWithDetailsAsync(employeeId, start, end, status, categoryId, deptId);
+
+            // ViewModel'e map'le ve geri dön
+            return expenses.Select(x => new ExpenseListViewModel
+            {
+                Id = x.Id,
+                EmployeeName = x.User.FirstName + " " + x.User.LastName,
+                Date = x.Date,
+                CategoryName = x.Category.Name,
+                Amount = x.Amount,
+                Status = (int)x.Status,
+
+            }).ToList();
+        }
     }
 
 

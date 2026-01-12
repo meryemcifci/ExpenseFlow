@@ -249,5 +249,45 @@ namespace ExpenseFlow.Data.Concrete
                 .Select(x => (x.CategoryName, x.TotalAmount))
                 .ToList();
         }
+
+        public async Task<List<Expense>> GetFilteredExpensesWithDetailsAsync(int? employeeId, DateTime? start, DateTime? end, int? status, int? categoryId, int departmentId)
+        {
+            var query = _context.Expenses
+                .Include(x => x.User)
+                .Include(x => x.Category)
+                .Where(x => x.User.DepartmentId == departmentId)
+                .AsQueryable();
+
+            // Filtreler dolu geldiyse query'ye ekle
+            if (employeeId.HasValue)
+                query = query.Where(x => x.UserId == employeeId);
+
+            if (start.HasValue)
+                query = query.Where(x => x.Date >= start.Value);
+
+            if (end.HasValue)
+                query = query.Where(x => x.Date <= end.Value);
+
+            if (status.HasValue)
+                query = query.Where(x => x.Status == (ExpenseStatus)status.Value);
+
+            if (categoryId.HasValue)
+                query = query.Where(x => x.CategoryId == categoryId.Value);
+
+            return await query.OrderByDescending(x => x.Date).ToListAsync();
+        }
+
+        public async Task<Dictionary<string, int>> GetExpenseCountsByCategoryAsync(int departmentId)
+        {
+            var counts = await _context.Expenses
+                .Include(x => x.Category)
+                .Include(x => x.User)
+                .Where(x => x.User.DepartmentId == departmentId)
+                .GroupBy(x => x.Category.Name)
+                .Select(g => new { CategoryName = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            return counts.ToDictionary(x => x.CategoryName, x => x.Count);
+        }
     }
 }

@@ -29,6 +29,8 @@ namespace ExpenseFlow.Data.Abstract
         decimal GetTotalAmountByExpenseStatus(int userId, ExpenseStatus expenseStatus);
         List<(string CategoryName, decimal TotalAmount)> GetTotalAmountByCategory(int userId);
 
-
+        Task<List<Expense>> GetFilteredExpensesWithDetailsAsync(int? employeeId, DateTime? start, DateTime? end, int? status, int? categoryId, int departmentId);
+        
+        Task<Dictionary<string, int>> GetExpenseCountsByCategoryAsync(int departmentId);
     }
 }

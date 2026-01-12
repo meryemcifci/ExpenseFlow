@@ -1,6 +1,7 @@
 ﻿using ExpenseFlow.Data.Abstract;
 using ExpenseFlow.Data.Context;
 using ExpenseFlow.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseFlow.Data.Concrete
 {
@@ -12,6 +13,8 @@ namespace ExpenseFlow.Data.Concrete
         {
             _context = context;
         }
+
+        
 
         public List<(AppUser User, string DepartmentName, string RoleName)> GetUsersWithDetails()
         {
@@ -45,6 +48,18 @@ namespace ExpenseFlow.Data.Concrete
                 (ur, r) => r.Name
             )
             .Any(roleName => roleName == "Accountant");
+        }
+
+        public async Task<AppUser> GetByIdAsync(int id)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+        }
+
+        public async Task<List<AppUser>> GetEmployeesByDepartmentAsync(int departmentId)
+        {
+            return await _context.Users
+                .Where(u => u.DepartmentId == departmentId)
+                .ToListAsync();
         }
     }
 }

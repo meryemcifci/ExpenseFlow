@@ -4,8 +4,9 @@ namespace ExpenseFlow.Data.Abstract
 {
     public interface IUserDal
     {
-        List<(AppUser User, string DepartmentName, string RoleName)> GetUsersWithDetails();
         bool HasAccountant();
-
+        Task<AppUser> GetByIdAsync(int id);
+        List<(AppUser User, string DepartmentName, string RoleName)> GetUsersWithDetails();
+        Task<List<AppUser>> GetEmployeesByDepartmentAsync(int departmentId);
     }
 }
