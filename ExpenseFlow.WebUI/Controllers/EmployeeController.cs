@@ -1,12 +1,18 @@
 ﻿using ExpenseFlow.Business.Abstract;
 using ExpenseFlow.Business.DTOs;
+using ExpenseFlow.Business.Services;
+using ExpenseFlow.Core.ResultModels;
+using ExpenseFlow.Core.ViewModels;
 using ExpenseFlow.Entity;
 using ExpenseFlow.WebUI.Hubs;
 using ExpenseFlow.WebUI.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Diagnostics;
+using System.Security.Claims;
+using System.Text.Json;
 
 namespace ExpenseFlow.WebUI.Controllers
 {
@@ -20,9 +26,11 @@ namespace ExpenseFlow.WebUI.Controllers
         private readonly IWebHostEnvironment _env;
         private readonly ICategoryService _categoryService;
         private readonly INotificationService _notificationService;
+        private readonly IEmployeeService _employeeService;
 
 
-        public EmployeeController(ILogger<EmployeeController> logger,  IExpenseService expenseService, IWebHostEnvironment env, ICategoryService categoryService, INotificationService notificationService)
+
+        public EmployeeController(ILogger<EmployeeController> logger,  IExpenseService expenseService, IWebHostEnvironment env, ICategoryService categoryService, INotificationService notificationService, IEmployeeService employeeService)
         {
 
             _logger = logger;
@@ -30,6 +38,7 @@ namespace ExpenseFlow.WebUI.Controllers
             _env = env;
             _categoryService = categoryService;
             _notificationService = notificationService;
+            _employeeService = employeeService;
         }
 
         //Dashboard
@@ -52,9 +61,9 @@ namespace ExpenseFlow.WebUI.Controllers
             ViewBag.CategoryAmounts = categoryData.Select(x => x.TotalAmount).ToList();
 
 
-            ViewData["TotalAmount"] = totalAmount;
-            ViewData["PaidAmount"] = paidAmount;
-            ViewData["PendingAmount"]=pendingAmount;
+            ViewData["TotalAmount"] = totalAmount.ToString("0.##");
+            ViewData["PaidAmount"] = paidAmount.ToString("0.##");
+            ViewData["PendingAmount"] = pendingAmount.ToString("0.##");
             return View();
         }
         //masraflarım buradan görüntülenecek
@@ -124,7 +133,7 @@ namespace ExpenseFlow.WebUI.Controllers
 
                 if (dto.ReceiptFile != null)
                 {
-                    var uploads = Path.Combine(_env.WebRootPath, "uploads");
+                    var uploads = Path.Combine(_env.WebRootPath, "expenses");
                     Directory.CreateDirectory(uploads);
 
                     var fileName = Guid.NewGuid() + Path.GetExtension(dto.ReceiptFile.FileName);
@@ -133,7 +142,7 @@ namespace ExpenseFlow.WebUI.Controllers
                     using var stream = new FileStream(filePath, FileMode.Create);
                     await dto.ReceiptFile.CopyToAsync(stream);
 
-                    expense.ReceiptImage = "/uploads/" + fileName;
+                    expense.ReceiptImage = "/uploads/expenses/" + fileName;
                 }
                 else
                 {
@@ -162,6 +171,87 @@ namespace ExpenseFlow.WebUI.Controllers
 
 
         }
+
+        //kullanıcı profili
+        public async Task<IActionResult> Profile()
+        {
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value);
+            var totalAmount = _expenseService.TotalAmount(userId);
+            var paidAmount = _expenseService.TotalPaidAmount(userId);
+            var pendingAmount = _expenseService.TotalPendingAmount(userId);
+
+            ViewData["TotalAmount"] = totalAmount.ToString("0.##");
+            ViewData["PaidAmount"] = paidAmount.ToString("0.##");
+            ViewData["PendingAmount"] = pendingAmount.ToString("0.##");
+
+            var user = _employeeService.GetUserProfile(userId);
+
+            if (user == null)
+                return NotFound();
+
+            var model = new UserProfileViewModel
+            {
+
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                UserName = user.UserName,
+
+                Address = user.Address,
+                City = user.City,
+                Country = user.Country,
+
+                AboutMe = user.AboutMe,
+                ProfileImageUrl = user.ProfileImageUrl,
+
+                RoleName = user.RoleName,
+                DepartmentName = user.DepartmentName
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateProfile(UpdateProfileViewModel model)
+        {
+            var userId = int.Parse(
+               User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value
+            );
+            await _employeeService.UpdateProfile(userId, model);
+            return RedirectToAction("Profile");
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateProfilePhoto(UpdateProfilePhotoViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return RedirectToAction("Profile");
+
+            var fileName = Guid.NewGuid() + Path.GetExtension(model.ProfileImage.FileName);
+            var path = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot/uploads/profile",
+                fileName
+            );
+
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await model.ProfileImage.CopyToAsync(stream);
+            }
+
+            var imageUrl = "/uploads/profile/" + fileName;
+
+            var userId = int.Parse(
+            User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value
+            );
+
+            await _employeeService.UpdateProfilePhotoAsync(model.UserId, imageUrl);
+
+            return RedirectToAction("Profile");
+        }
+
+
 
         public IActionResult Privacy()
         {
