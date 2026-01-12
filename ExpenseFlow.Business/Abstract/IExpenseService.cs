@@ -1,4 +1,5 @@
-﻿using ExpenseFlow.Entity;
+﻿using ExpenseFlow.Core.ViewModels;
+using ExpenseFlow.Entity;
 
 namespace ExpenseFlow.Business.Abstract
 {
@@ -34,5 +35,9 @@ namespace ExpenseFlow.Business.Abstract
         decimal GetRejectedAmount(int userId);
         List<(string CategoryName, decimal TotalAmount)> GetExpenseAmountsByCategory(int userId);
 
+
+        Task<List<ExpenseListViewModel>> GetDashboardExpensesAsync(int? employeeId, DateTime? start, DateTime? end, int? status, int? categoryId, int managerId);
+        
+        Task<Dictionary<string, int>> GetExpenseCountsByCategoryAsync(int managerId);
     }
 }

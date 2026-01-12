@@ -253,7 +253,7 @@ namespace ExpenseFlow.WebUI.Controllers
                 else if (await _userManager.IsInRoleAsync(user, "Manager"))
                 {
                     _logger.LogInformation($"ExpenseFlow_log Auth/Login post email: {user.Email} giriş yaptı!");
-                    return RedirectToAction("Index", "ExpenseApproval");
+                    return RedirectToAction("Index", "Manager");
                 }
                 else if (await _userManager.IsInRoleAsync(user, "Accountant"))
                 {

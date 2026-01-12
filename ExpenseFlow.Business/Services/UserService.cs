@@ -1,10 +1,6 @@
 ﻿using ExpenseFlow.Business.Abstract;
 using ExpenseFlow.Business.DTOs;
 using ExpenseFlow.Data.Abstract;
-using ExpenseFlow.Data.Context;
-using ExpenseFlow.Entity;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseFlow.Business.Services
 {
@@ -16,6 +12,7 @@ namespace ExpenseFlow.Business.Services
         {
             _userDal = userDal;
         }
+
 
         public List<UserDto> GetUserListWithDetails()
         {
@@ -40,6 +37,32 @@ namespace ExpenseFlow.Business.Services
         public bool HasAccountant()
         {
             return _userDal.HasAccountant();
+        }
+
+        public async Task<UserDto> GetByIdAsync(int id)
+        {
+            var user = await _userDal.GetByIdAsync(id);
+            if (user == null)
+                return null;
+
+            return new UserDto
+            {
+                Id = user.Id.ToString(),
+                FirstName = user.FirstName,
+                LastName = user.LastName
+            };
+        }
+
+        public async Task<List<UserDto>> GetEmployeesByDepartmentAsync(int departmentId)
+        {
+            var users = await _userDal.GetEmployeesByDepartmentAsync(departmentId);
+
+            return users.Select(u => new UserDto
+            {
+                Id = u.Id.ToString(),
+                FirstName = u.FirstName,
+                LastName = u.LastName
+            }).ToList();
         }
     }
 }
