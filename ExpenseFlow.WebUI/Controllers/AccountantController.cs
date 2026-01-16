@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DocumentFormat.OpenXml.Bibliography;
 using ExpenseFlow.Business.Abstract;
+using ExpenseFlow.Business.Services;
 using ExpenseFlow.Entity;
 using ExpenseFlow.WebUI.Hubs;
 using Microsoft.AspNetCore.Authorization;
@@ -22,9 +23,10 @@ namespace ExpenseFlow.WebUI.Controllers
         private readonly IHubContext<NotificationHub> _hubContext;
         private readonly INotificationService _notificationService;
         private readonly UserManager<AppUser> _userManager;
+        private IReportService _reportService;
 
 
-        public AccountantController(IExpenseService expenseService, ILogger<AccountantController> logger,IMapper mapper, IHubContext<NotificationHub> hubContext, INotificationService notificationService, UserManager<AppUser> userManager)
+        public AccountantController(IExpenseService expenseService, ILogger<AccountantController> logger,IMapper mapper, IHubContext<NotificationHub> hubContext, INotificationService notificationService, UserManager<AppUser> userManager, IReportService reportService)
         {
             _expenseService = expenseService;
             _logger = logger;
@@ -32,6 +34,7 @@ namespace ExpenseFlow.WebUI.Controllers
             _hubContext = hubContext;
             _notificationService = notificationService;
             _userManager = userManager;
+            _reportService = reportService;
         }
 
 
@@ -159,6 +162,38 @@ namespace ExpenseFlow.WebUI.Controllers
             return View(dtoList);
         }
 
+        public IActionResult MonthlyReport()
+        {
+           
+
+            return View();
+        }
+        // PDF İNDİRME
+        [Authorize(Roles = "Accountant")]
+        [HttpGet]
+        public async Task<IActionResult> DownloadMonthlyAccountantPdf(
+            int year,
+            int month)
+        {
+            string logoPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot",
+                "img",
+                "ExpenseFlow.png"
+            );
+
+            var pdfBytes = await _reportService
+                .GenerateMonthlyAccountantPdfAsync(year, month, logoPath);
+
+            var fileName =
+                $"AccountantExpenseReport_{year}_{month:D2}_{DateTime.Now:yyyyMMdd_HHmm}.pdf";
+
+            return File(
+                pdfBytes,
+                "application/pdf",
+                fileName
+            );
+        }
 
 
 

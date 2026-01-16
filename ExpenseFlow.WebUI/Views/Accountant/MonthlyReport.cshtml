@@ -1,0 +1,38 @@
+﻿@{
+    ViewData["Title"] = "Aylık Harcama Raporu";
+    Layout = "~/Views/Shared/_LayoutAccountant.cshtml";
+}
+
+<h3>Aylık Muhasebe Raporu</h3>
+
+<form method="get"
+      asp-controller="Accountant"
+      asp-action="DownloadMonthlyAccountantPdf"
+      class="row g-3">
+
+    <div class="col-md-3">
+        <label>Yıl</label>
+        <select name="year" class="form-control">
+            @for (int y = DateTime.Now.Year; y >= DateTime.Now.Year - 5; y--)
+            {
+                <option value="@y">@y</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label>Ay</label>
+        <select name="month" class="form-control">
+            @for (int m = 1; m <= 12; m++)
+            {
+                <option value="@m">@m</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-3 align-self-end">
+        <button type="submit" class="btn btn-danger">
+            PDF Raporu İndir
+        </button>
+    </div>
+</form>
