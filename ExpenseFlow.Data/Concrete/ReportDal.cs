@@ -14,6 +14,17 @@ namespace ExpenseFlow.Data.Concrete
         {
             _context = context;
         }
+
+        public async Task<List<Expense>> GetMonthlyManagerReportDataAsync(int year, int month)
+        {
+            return await _context.Expenses
+               .Include(x => x.User)
+                   .ThenInclude(u => u.Department)
+               .Include(x => x.Category)
+               .Where(x => x.Date.Year == year && x.Date.Month == month)
+               .ToListAsync();
+        }
+
         public async Task<List<Expense>> GetUserExpenseReportDataAsync(int userId)
         {
             return await _context.Expenses

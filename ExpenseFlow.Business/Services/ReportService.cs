@@ -258,5 +258,149 @@ namespace ExpenseFlow.Business.Services
 
             return stream.ToArray();
         }
+
+        public Task<List<Expense>> GetMonthlyManagerReportDataAsync(int year, int month)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<byte[]> GenerateMonthlyManagerPdfAsync(int year, int month, string logoPath)
+        {
+            QuestPDF.Settings.License = LicenseType.Community;
+
+            var expenses = await _reportDal
+                .GetMonthlyManagerReportDataAsync(year, month);
+
+            var approved = expenses
+                .Where(x => x.Status == ExpenseStatus.Approved)
+                .ToList();
+
+            var rejected = expenses
+                .Where(x => x.Status == ExpenseStatus.Rejected)
+                .ToList();
+
+            var categorySummary = expenses
+                .GroupBy(x => x.Category.Name)
+                .Select(g => new
+                {
+                    Category = g.Key,
+                    Count = g.Count(),
+                    ApprovedTotal = g
+                        .Where(x => x.Status == ExpenseStatus.Approved)
+                        .Sum(x => x.Amount),
+                    RejectedTotal = g
+                        .Where(x => x.Status == ExpenseStatus.Rejected)
+                        .Sum(x => x.Amount)
+                })
+                .ToList();
+
+            var pdf = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(25);
+                    page.DefaultTextStyle(x => x.FontSize(10));
+
+                    // 🔹 HEADER
+                    page.Header().PaddingBottom(10).Column(col =>
+                    {
+                        if (File.Exists(logoPath))
+                        {
+                            col.Item()
+                                .AlignCenter()
+                                .MaxHeight(50)
+                                .Image(logoPath);
+                        }
+
+                        col.Item()
+                            .AlignCenter()
+                            .Text($"Aylık Harcama Raporu ({month:D2}.{year})")
+                            .FontSize(14)
+                            .Bold();
+
+                        col.Item()
+                            .AlignCenter()
+                            .Text($"Rapor Tarihi: {DateTime.Now:dd.MM.yyyy}")
+                            .FontSize(9);
+                    });
+
+                    // 🔹 CONTENT
+                    page.Content().Column(col =>
+                    {
+                        // ÖZET KUTULAR
+                        col.Item()
+                            .Background(Colors.Grey.Lighten3)
+                            .Padding(10)
+                            .Row(row =>
+                            {
+                                row.RelativeItem()
+                                    .Text($"Onaylanan Harcama: {approved.Count} adet")
+                                    .Bold();
+
+                                row.RelativeItem()
+                                    .Text($"Reddedilen Harcama: {rejected.Count} adet")
+                                    .Bold();
+                            });
+
+                        col.Item().PaddingTop(8).Row(row =>
+                        {
+                            row.RelativeItem()
+                                .Background(Colors.Green.Lighten3)
+                                .Padding(10)
+                                .Text($"Onaylanan Tutar: {approved.Sum(x => x.Amount):0.00} ₺")
+                                .Bold();
+
+                            row.RelativeItem()
+                                .Background(Colors.Red.Lighten3)
+                                .Padding(10)
+                                .Text($"Reddedilen Tutar: {rejected.Sum(x => x.Amount):0.00} ₺")
+                                .Bold();
+                        });
+
+                        // KATEGORİ ÖZET TABLOSU
+                        col.Item().PaddingTop(15)
+                            .Text("Kategori Bazlı Harcama Özeti")
+                            .Bold();
+
+                        col.Item().Table(table =>
+                        {
+                            table.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn(3);
+                                columns.RelativeColumn(2);
+                                columns.RelativeColumn(2);
+                                columns.RelativeColumn(2);
+                            });
+
+                            table.Header(header =>
+                            {
+                                header.Cell().Text("Kategori").Bold();
+                                header.Cell().AlignRight().Text("Adet").Bold();
+                                header.Cell().AlignRight().Text("Onaylanan ₺").Bold();
+                                header.Cell().AlignRight().Text("Reddedilen ₺").Bold();
+                            });
+
+                            foreach (var c in categorySummary)
+                            {
+                                table.Cell().Padding(4).Text(c.Category);
+                                table.Cell().Padding(4).AlignRight().Text(c.Count.ToString());
+                                table.Cell().Padding(4).AlignRight().Text($"{c.ApprovedTotal:0.00}");
+                                table.Cell().Padding(4).AlignRight().Text($"{c.RejectedTotal:0.00}");
+                            }
+                        });
+                    });
+
+                    // 🔹 FOOTER
+                    page.Footer()
+                        .AlignCenter()
+                        .Text("ExpenseFlow © 2025")
+                        .FontSize(9)
+                        .FontColor(Colors.Grey.Darken2);
+                });
+            }).GeneratePdf();
+
+            return pdf;
+        }
     }
 }
