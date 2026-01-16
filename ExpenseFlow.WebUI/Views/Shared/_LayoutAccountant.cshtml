@@ -121,7 +121,11 @@
                                 <img class="img-profile rounded-circle" src="~/template/admin/startbootstrap-sb-admin-2-gh-pages/startbootstrap-sb-admin-2-gh-pages/img/undraw_profile.svg">
                             </a>
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in">
-                                <a class="dropdown-item" asp-controller="Account" asp-action="Logout">
+                                <a class="dropdown-item" asp-controller="Accountant" asp-action="Profile">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profilim
+                                </a>
+                                <a class="dropdown-item" asp-controller="Accountant" asp-action="Logout">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Çıkış Yap
                                 </a>
@@ -159,6 +163,10 @@
     <script src="~/js/signalR.js"></script>
 
     <script src="~/js/notification.js"></script>
+
+
+    <script src="~/js/address.js"></script>
+    <script src="~/js/modalProfile.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 
