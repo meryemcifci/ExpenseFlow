@@ -41,5 +41,10 @@ namespace ExpenseFlow.Business.Abstract
         Task<List<ExpenseListViewModel>> GetDashboardExpensesAsync(int? employeeId, DateTime? start, DateTime? end, int? status, int? categoryId, int managerId);
         
         Task<Dictionary<string, int>> GetExpenseCountsByCategoryAsync(int managerId);
+
+        Task<Dictionary<string, int>> GetApprovedExpenseCountByDepartmentAsync();
+
+
+        Task<Dictionary<string, int>> GetExpenseCountsByCategoryAsync();
     }
 }

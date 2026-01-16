@@ -156,6 +156,17 @@ namespace ExpenseFlow.Business.Services
         {
             return _expenseDal.GetPaidExpenses();
         }
+
+        public Task<Dictionary<string, int>> GetApprovedExpenseCountByDepartmentAsync()
+        {
+            return _expenseDal.GetApprovedExpenseCountByDepartmentAsync();
+        }
+
+        public async Task<Dictionary<string, int>> GetExpenseCountsByCategoryAsync()
+        {
+            return await _expenseDal.GetExpenseCountsByCategoryForAllAsync();
+        }
+
     }
 
 

@@ -35,5 +35,16 @@ namespace ExpenseFlow.Data.Abstract
 
         List<Expense> GetPaidExpenses();
 
+
+        Task<Dictionary<string, int>> GetApprovedExpenseCountByDepartmentAsync();
+
+
+
+
+        //accountant için :
+
+        Task<Dictionary<string, int>> GetExpenseCountsByCategoryForAllAsync();
+
+
     }
 }
