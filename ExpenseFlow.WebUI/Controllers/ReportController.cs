@@ -28,7 +28,7 @@ namespace ExpenseFlow.WebUI.Controllers
 
             int userId = int.Parse(userIdClaim.Value);
 
-          
+
             string logoPath = Path.Combine(
                 Directory.GetCurrentDirectory(),
                 "wwwroot",
@@ -57,7 +57,7 @@ namespace ExpenseFlow.WebUI.Controllers
                 "img",
                 "ExpenseFlow.png"
             );
-            var excelBytes = await _reportService.GenerateUserExpenseExcelAsync(userId,logoPath);
+            var excelBytes = await _reportService.GenerateUserExpenseExcelAsync(userId, logoPath);
             var fileName = $"ExpenseReport_{DateTime.Now:yyyyMMdd_HH.mm}.xls";
 
             return File(
@@ -67,5 +67,30 @@ namespace ExpenseFlow.WebUI.Controllers
             );
         }
 
+        [HttpGet]
+        public async Task<IActionResult> DownloadMonthlyManagerPdf(int year, int month)
+        {
+            // Giriş yapan kullanıcı Id
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
+            string logoPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot",
+                "img",
+                "ExpenseFlow.png"
+            );
+            var pdfBytes = await _reportService.GenerateMonthlyManagerPdfAsync(year, month, logoPath);
+            var fileName = $"ManagerExpenseReport_{year}_{month}_{DateTime.Now:yyyyMMdd_HH.mm}.pdf";
+            return File(
+                pdfBytes,
+                "application/pdf",
+                fileName
+            );
+
+
+
+
+        }
     }
 }

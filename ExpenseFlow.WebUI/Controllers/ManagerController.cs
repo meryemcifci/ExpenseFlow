@@ -23,9 +23,10 @@ namespace ExpenseFlow.WebUI.Controllers
         private readonly IUserDal _userDal;//UserDal buraya eklemek istemezdim :(
         private readonly IManagerService _managerService;
         private readonly IAddressService _addressService;
+        private readonly IReportService _reportService;
 
 
-        public ManagerController(IExpenseService expenseService, IWebHostEnvironment env, ICategoryService categoryService, IUserService userService, IUserDal userDal, IManagerService managerService, IAddressService addressService)
+        public ManagerController(IExpenseService expenseService, IWebHostEnvironment env, ICategoryService categoryService, IUserService userService, IUserDal userDal, IManagerService managerService, IAddressService addressService, IReportService reportService)
         {
             _expenseService = expenseService;
             _env = env;
@@ -34,6 +35,7 @@ namespace ExpenseFlow.WebUI.Controllers
             _userDal = userDal;
             _managerService = managerService;
             _addressService = addressService;
+            _reportService = reportService;
         }
 
         public async Task<IActionResult> Index(int? employeeId, DateTime? startDate, DateTime? endDate, int? status, int? categoryId)
@@ -72,7 +74,7 @@ namespace ExpenseFlow.WebUI.Controllers
             var profile = await _managerService.GetManagerProfileAsync(userId);
 
             return View(profile);
-            
+
         }
 
         [HttpPost]
@@ -115,9 +117,43 @@ namespace ExpenseFlow.WebUI.Controllers
 
             return RedirectToAction("Profile");
         }
+
+
+        [HttpGet]
+        public IActionResult MonthlyReport()
+        {
+            return View();
+        }
+
+        // PDF İNDİRME
+        [Authorize(Roles = "Manager")]
+        [HttpGet]
+        public async Task<IActionResult> DownloadMonthlyManagerPdf(
+            int year,
+            int month)
+        {
+            string logoPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot",
+                "img",
+                "ExpenseFlow.png"
+            );
+
+            var pdfBytes = await _reportService
+                .GenerateMonthlyManagerPdfAsync(year, month, logoPath);
+
+            var fileName =
+                $"ManagerExpenseReport_{year}_{month:D2}_{DateTime.Now:yyyyMMdd_HHmm}.pdf";
+
+            return File(
+                pdfBytes,
+                "application/pdf",
+                fileName
+            );
+        }
+
+
     }
-
-
 }
 
 

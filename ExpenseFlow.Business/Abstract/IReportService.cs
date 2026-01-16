@@ -7,6 +7,15 @@ namespace ExpenseFlow.Business.Abstract
         Task<byte[]> GenerateUserExpensePdfAsync(int userId, string logoPath);
 
         Task<byte[]> GenerateUserExpenseExcelAsync(int userId, string logoPath);
-    }
 
+
+        Task<byte[]> GenerateMonthlyManagerPdfAsync(int year, int month, string logoPath);
+
+
+
+
+
+
+    }
+    
 }
