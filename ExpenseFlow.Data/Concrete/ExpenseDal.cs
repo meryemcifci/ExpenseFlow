@@ -300,5 +300,35 @@ namespace ExpenseFlow.Data.Concrete
                 )
                 .ToList();
         }
+
+        public async Task<Dictionary<string, int>> GetApprovedExpenseCountByDepartmentAsync()
+        {
+            return await _context.Expenses
+                .Include(x => x.User)
+                .Where(x => x.Status == ExpenseStatus.Approved)
+                .GroupBy(x => x.User.Department.Name)
+                .Select(g => new
+                {
+                    DepartmentName = g.Key,
+                    Count = g.Count()
+                })
+                .ToDictionaryAsync(x => x.DepartmentName, x => x.Count);
+        }
+        public async Task<Dictionary<string, int>> GetExpenseCountsByCategoryForAllAsync()
+        {
+            var data = await _context.Expenses
+                .Include(x => x.Category)
+                .Where(x => x.Status == ExpenseStatus.Approved)
+                .GroupBy(x => x.Category.Name)
+                .Select(g => new
+                {
+                    CategoryName = g.Key,
+                    Count = g.Count()
+                })
+                .ToListAsync();
+
+            return data.ToDictionary(x => x.CategoryName, x => x.Count);
+        }
+
     }
 }

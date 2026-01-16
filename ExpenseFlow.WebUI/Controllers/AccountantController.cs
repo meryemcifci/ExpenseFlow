@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Bibliography;
 using ExpenseFlow.Business.Abstract;
 using ExpenseFlow.Entity;
 using ExpenseFlow.WebUI.Hubs;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
 
 namespace ExpenseFlow.WebUI.Controllers
 {
@@ -33,8 +35,33 @@ namespace ExpenseFlow.WebUI.Controllers
         }
 
 
-        public IActionResult Index()//Dashboard=>Genel Bakış
+        public async Task<IActionResult> Index()
         {
+
+            var approvedExpenses = _expenseService.GetApprovedExpenses();
+            var paidExpenses = _expenseService.GetPaidExpenses();
+
+            ViewBag.TotalApproved = approvedExpenses.Sum(x => x.Amount);
+            ViewBag.TotalPaid = paidExpenses.Sum(x => x.Amount);
+
+            ViewBag.TotalPending = approvedExpenses
+                .Where(x => x.PaymentStatus == PaymentStatus.Pending)
+                .Sum(x => x.Amount);
+
+            ViewBag.ApprovedCount = approvedExpenses.Count;
+
+            var departmentCounts =
+                await _expenseService.GetApprovedExpenseCountByDepartmentAsync();
+
+            var categoryCounts =
+                await _expenseService.GetExpenseCountsByCategoryAsync();
+
+            ViewBag.DepartmentLabels = departmentCounts.Keys.ToList();
+            ViewBag.DepartmentData = departmentCounts.Values.ToList();
+
+            ViewBag.CategoryLabels = categoryCounts.Keys.ToList();
+            ViewBag.CategoryData = categoryCounts.Values.ToList();
+
             return View();
         }
 
