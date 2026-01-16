@@ -39,6 +39,7 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddHttpClient<IAddressService, AddressService>();
+builder.Services.AddScoped<IManagerService, ManagerService>();
 
 
 // WebUI içinde bulunan arayüz için hazırlanan servis
@@ -63,6 +64,7 @@ builder.Services.AddScoped<IUserDal, UserDal>();
 builder.Services.AddScoped<INotificationDal, NotificationDal>();
 builder.Services.AddScoped<IReportDal, ReportDal>();
 builder.Services.AddScoped<IEmployeeDal, EmployeeDal>();
+builder.Services.AddScoped<IManagerDal, ManagerDal>();
 
 
 
