@@ -21,13 +21,12 @@
 
         <ul class="navbar-nav bg-white sidebar sidebar-light accordion shadow" id="accordionSidebar">
 
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/Admin/Home/Index">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" asp-area="Admin" asp-controller="Home" asp-action="Index">
                 <img src="~/img/ExpenseFlow.png" alt="ExpenseFlow" style="max-height: 60px; width: auto;">
             </a>
-
             <hr class="sidebar-divider my-0">
             
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="/Admin/Home/Index">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Genel Bakış</span>
@@ -44,23 +43,14 @@
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseExpenses"
                    aria-expanded="true" aria-controls="collapseExpenses">
                     <i class="fas fa-fw fa-file-invoice-dollar"></i>
-                    <span>Masraflarım</span>
+                    <span>Masraflar</span>
                 </a>
                 <div id="collapseExpenses" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">İşlemler:</h6>
-                        <a class="collapse-item" href="#">Yeni Masraf Ekle</a>
-                        <a class="collapse-item" href="#">Harcama Geçmişim</a>
+                        <a class="nav-link" href="/Admin/Home/ExpensHistory">Harcama Geçmişi</a>
                     </div>
                 </div>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="fas fa-fw fa-check-double"></i>
-                    <span>Onay Merkezi</span>
-                    <span class="badge badge-danger badge-counter" style="margin-left:5px;">1</span>
-                </a>
             </li>
 
             <hr class="sidebar-divider">
@@ -79,9 +69,9 @@
                      data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Analizler:</h6>
-                        <a class="collapse-item" href="#">Aylık Gider Özeti</a>
-                        <a class="collapse-item" href="#">Departman Raporları</a>
-                        <a class="collapse-item" href="#">Kategori Bazlı Analiz</a>
+                        <a class="nav-link" href="/Admin/Home/MonthlyExpensReport">Aylık Gider Raporu</a>
+                        <a class="nav-link" href="/Admin/Home/DepartmentReports">Departman Analizi</a>
+                        <a class="nav-link" href="/Admin/Home/CategoryReports">Kategori Bazlı Analiz</a>
                     </div>
                 </div>
             </li>
@@ -95,12 +85,12 @@
                 <div id="collapseSettings" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Yönetici Paneli:</h6>
-                        <a class="collapse-item" href="#">Kullanıcılar & Roller</a>
-                        <a class="collapse-item" href="#">Departmanlar</a>
-                        <a class="collapse-item" href="#">Gider Kategorileri</a>
+                        <a class="collapse-item" href="/Admin/Admin/UsersRoles">Kullanıcılar & Roller</a>
+                        <a class="collapse-item" href="/Admin/Admin/Departments">Departmanlar</a>
+                        <a class="collapse-item" href="/Admin/Admin/ExpenseCategory">Gider Kategorileri</a>
                         <div class="collapse-divider"></div>
                         <h6 class="collapse-header">Sistem:</h6>
-                        <a class="collapse-item" href="#">Log Kayıtları</a>
+                        <a class="collapse-item" href="/Admin/Logs/LogRecords">Log Kayıtları</a>
                     </div>
                 </div>
             </li>
