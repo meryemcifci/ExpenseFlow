@@ -136,7 +136,7 @@ namespace ExpenseFlow.WebUI.Areas.Admin.Controllers
 
 
 
-        public IActionResult Index()
+        public IActionResult UsersRoles()
         {
             var userList = _userService.GetUserListWithDetails();
 
