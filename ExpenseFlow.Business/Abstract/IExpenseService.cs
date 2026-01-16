@@ -19,6 +19,8 @@ namespace ExpenseFlow.Business.Abstract
 
         Task UpdatePaymentStatusAsync(int expenseId, PaymentStatus status);
         List<Expense> GetApprovedExpenses();
+        List<Expense> GetPaidExpenses();
+
 
         decimal TotalAmount(int userId);
 

@@ -151,6 +151,11 @@ namespace ExpenseFlow.Business.Services
 
             }).ToList();
         }
+
+        public List<Expense> GetPaidExpenses()
+        {
+            return _expenseDal.GetPaidExpenses();
+        }
     }
 
 

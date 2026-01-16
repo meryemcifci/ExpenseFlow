@@ -1,0 +1,54 @@
+﻿@model List<ApprovedExpenseDto>
+@using ExpenseFlow.Entity
+@{
+    ViewData["Title"] = "Ödenen Masraflar";
+    Layout = "~/Views/Shared/_LayoutAccountant.cshtml";
+}
+
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+
+        <h5 class="mb-3 text-success">
+             Ödenmiş Harcamalar
+        </h5>
+
+        @if (Model == null || !Model.Any())
+        {
+            <p class="text-muted">
+                Henüz ödenmiş harcama bulunmamaktadır.
+            </p>
+        }
+        else
+        {
+            <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Açıklama</th>
+                        <th>Tutar</th>
+                        <th>Kategori</th>
+                        <th>Tarih</th>
+                        <th>Ödeme Durumu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Description</td>
+                            <td>@item.Amount.ToString("N2") ₺</td>
+                            <td>@item.CategoryName</td>
+                            <td>@item.Date.ToString("dd.MM.yyyy")</td>
+                            <td>
+                                <span class="badge badge-success">
+                                    Ödendi
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+    </div>
+</div>
