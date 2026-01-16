@@ -7,6 +7,7 @@ namespace ExpenseFlow.Data.Abstract
         Task<List<Expense>> GetUserExpenseReportDataAsync(int userId);
 
         Task<List<Expense>> GetMonthlyManagerReportDataAsync(int year, int month);
+        Task<List<Expense>> GetMonthlyAccountantReportDataAsync(int year, int month);
 
 
 

@@ -12,6 +12,9 @@ namespace ExpenseFlow.Business.Abstract
         Task<byte[]> GenerateMonthlyManagerPdfAsync(int year, int month, string logoPath);
 
 
+        Task<byte[]> GenerateMonthlyAccountantPdfAsync(int year, int month, string logoPath);
+
+
 
 
 
