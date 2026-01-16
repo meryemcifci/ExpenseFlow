@@ -18,4 +18,9 @@
 
     public string? AboutMe { get; set; }
     public string? ProfileImageUrl { get; set; }
+
+
+    
+
+
 }

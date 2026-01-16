@@ -1,5 +1,6 @@
 ﻿using ExpenseFlow.Business.Abstract;
 using ExpenseFlow.Business.Services;
+using ExpenseFlow.Core.ViewModels;
 using ExpenseFlow.Data.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,24 +14,26 @@ namespace ExpenseFlow.WebUI.Controllers
     [Authorize(Roles = "Manager")]
     public class ManagerController : Controller
     {
+
         private readonly IExpenseService _expenseService;
         private readonly IWebHostEnvironment _env;
         private readonly ICategoryService _categoryService;
         private readonly INotificationService _notificationService;
-        private readonly IEmployeeService _employeeService;
         private readonly IUserService _userService;
-        private readonly IUserDal _userDal;
+        private readonly IUserDal _userDal;//UserDal buraya eklemek istemezdim :(
+        private readonly IManagerService _managerService;
+        private readonly IAddressService _addressService;
 
 
-        public ManagerController(IExpenseService expenseService, IWebHostEnvironment env, ICategoryService categoryService, INotificationService notificationService, IEmployeeService employeeService, IUserService userService, IUserDal userDal)
+        public ManagerController(IExpenseService expenseService, IWebHostEnvironment env, ICategoryService categoryService, IUserService userService, IUserDal userDal, IManagerService managerService, IAddressService addressService)
         {
             _expenseService = expenseService;
             _env = env;
             _categoryService = categoryService;
-            _notificationService = notificationService;
-            _employeeService = employeeService;
             _userService = userService;
             _userDal = userDal;
+            _managerService = managerService;
+            _addressService = addressService;
         }
 
         public async Task<IActionResult> Index(int? employeeId, DateTime? startDate, DateTime? endDate, int? status, int? categoryId)
@@ -63,12 +66,58 @@ namespace ExpenseFlow.WebUI.Controllers
         }
 
 
-        public IActionResult MANAGER()
+        public async Task<IActionResult> Profile()
         {
-            return View();
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value);
+            var profile = await _managerService.GetManagerProfileAsync(userId);
+
+            return View(profile);
+            
         }
 
+        [HttpPost]
+        public async Task<IActionResult> UpdateProfile(UpdateProfileViewModel model)
+        {
+            var userId = int.Parse(
+               User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value
+            );
+            await _managerService.UpdateProfile(userId, model);
+            return RedirectToAction("Profile");
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> UpdateProfilePhoto(IFormFile photo)
+        {
+            if (photo == null || photo.Length == 0)
+                return RedirectToAction("Profile");
+
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var uploadsFolder = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot/uploads/profile"
+            );
+
+            if (!Directory.Exists(uploadsFolder))
+                Directory.CreateDirectory(uploadsFolder);
+
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(photo.FileName)}";
+            var filePath = Path.Combine(uploadsFolder, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await photo.CopyToAsync(stream);
+            }
+
+            var photoUrl = "/uploads/profile/" + fileName;
+
+            await _managerService.UpdateProfilePhotoAsync(userId, photoUrl);
+
+            return RedirectToAction("Profile");
+        }
     }
 
+
 }
+
+
