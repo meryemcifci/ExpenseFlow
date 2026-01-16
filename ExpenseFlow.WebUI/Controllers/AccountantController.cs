@@ -119,5 +119,21 @@ namespace ExpenseFlow.WebUI.Controllers
         }
 
 
+        [HttpGet]
+        public IActionResult PaidExpenses()
+        {
+            var paidExpenses = _expenseService.GetPaidExpenses();
+            var dtoList = _mapper.Map<List<ApprovedExpenseDto>>(paidExpenses);
+
+            var userId = int.Parse(_userManager.GetUserId(User));
+            ViewBag.UnreadCount = _notificationService.GetUnreadCount(userId);
+            ViewBag.Notifications = _notificationService.GetByUserId(userId);
+
+            return View(dtoList);
+        }
+
+
+
+
     }
 }

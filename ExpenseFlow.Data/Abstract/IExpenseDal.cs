@@ -32,5 +32,8 @@ namespace ExpenseFlow.Data.Abstract
         Task<List<Expense>> GetFilteredExpensesWithDetailsAsync(int? employeeId, DateTime? start, DateTime? end, int? status, int? categoryId, int departmentId);
         
         Task<Dictionary<string, int>> GetExpenseCountsByCategoryAsync(int departmentId);
+
+        List<Expense> GetPaidExpenses();
+
     }
 }

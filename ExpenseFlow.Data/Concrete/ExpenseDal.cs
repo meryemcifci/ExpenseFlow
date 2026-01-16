@@ -289,5 +289,16 @@ namespace ExpenseFlow.Data.Concrete
 
             return counts.ToDictionary(x => x.CategoryName, x => x.Count);
         }
+
+        public List<Expense> GetPaidExpenses()
+        {
+            return _context.Expenses
+                .Include(x => x.Category)
+                .Where(x =>
+                    x.Status == ExpenseStatus.Approved &&
+                    x.PaymentStatus == PaymentStatus.Paid
+                )
+                .ToList();
+        }
     }
 }
