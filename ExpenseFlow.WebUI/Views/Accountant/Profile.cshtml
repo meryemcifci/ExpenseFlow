@@ -1,0 +1,266 @@
+﻿@model UserProfileViewModel
+
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Shared/_LayoutAccountant.cshtml";
+}
+
+<div class="container-fluid">
+
+    <div class="row justify-content-center">
+
+        <!-- Profile Card -->
+        <div class="col-xl-4 col-lg-5 col-md-6">
+            <div class="card shadow mb-4 text-center">
+
+                <div class="card-body position-relative">
+
+                    <!-- Profile Image -->
+                    <img src="@(Model.ProfileImageUrl ?? "/img/default-avatar.png")"
+                         class="img-profile rounded-circle mb-3"
+                         style="width:140px;height:140px;object-fit:cover;" />
+
+                    <!-- Change Photo Button -->
+                    <div class="mb-3">
+                        <button class="btn btn-sm btn-outline-primary"
+                                data-toggle="modal"
+                                data-target="#photoModal">
+                            Fotoğrafı Değiştir
+                        </button>
+                    </div>
+
+                    <!-- User Info -->
+                    <h5 class="font-weight-bold mb-1">
+                        @Model.FirstName @Model.LastName
+                    </h5>
+
+                    <span class="badge badge-primary mb-3">
+                        @Model.DepartmentName Departman
+                    </span>
+
+                </div>
+
+                <!-- Profile Details -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            Profil Detay
+                        </h6>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row mb-2">
+                            <div class="col-4 text-muted">Hakkımda</div>
+                            <div class="col-8">
+                                @(string.IsNullOrEmpty(Model.AboutMe) ? "-" : Model.AboutMe)
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-4 text-muted">Kullanıcı Adı</div>
+                            <div class="col-8">@Model.UserName</div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-4 text-muted">E-mail</div>
+                            <div class="col-8">@Model.Email</div>
+                        </div>
+
+
+                        <h6 class="heading-small text-muted mb-4"></h6>
+
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>Adres</label>
+                                    <input type="text"
+                                           name="Address"
+                                           value="@Model.Address"
+                                           readonly
+                                           class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-lg-6">
+                                    <label>İl</label>
+                                    <input type="text"
+                                           name="City"
+                                           readonly
+                                           value="@Model.City"
+                                           class="form-control" />
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <label>Ülke</label>
+                                    <input type="text"
+                                           name="Country"
+                                           value="@Model.Country"
+                                           readonly
+                                           class="form-control" />
+                                </div>
+
+                                <div class="col-lg-12">
+                                    <label>İlçe</label>
+                                    <input type="text"
+                                           name="District"
+                                           value="@Model.District"
+                                           readonly
+                                           class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Edit Profile -->
+                <button class="btn btn-sm btn-outline-primary"
+                        data-toggle="modal"
+                        data-target="#editProfileModal">
+                    Profili Güncelle
+                </button>
+
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- EDIT PROFILE MODAL -->
+<div class="modal fade" id="editProfileModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <form asp-action="UpdateProfile"
+                  asp-controller="Accountant"
+                  method="post"
+                  class="needs-validation"
+                  novalidate>
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Profili Düzenle</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+
+                <input type="hidden" name="UserId" value="@Model.UserId" />
+
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label>Hakkınızda</label>
+                        <textarea name="AboutMe"
+                                  class="form-control"
+                                  rows="3"
+                                  required>@Model.AboutMe</textarea>
+                        <div class="invalid-feedback">
+                            Bu alan boş bırakılamaz.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ülke</label>
+                        <select id="countrySelect"
+                                name="Country"
+                                class="form-control"
+                                required>
+                            <option value="">Ülke Seçiniz</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Lütfen bir ülke seçiniz.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Şehir</label>
+                        <select id="citySelect"
+                                name="City"
+                                class="form-control"
+                                required>
+                            <option value="">Şehir seçiniz</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Lütfen bir şehir seçiniz.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>İlçe</label>
+                        <input type="text"
+                               name="District"
+                               value="@Model.District"
+                               class="form-control"
+                               placeholder="İlçe giriniz"
+                               required />
+                        <div class="invalid-feedback">
+                            İlçe alanı boş bırakılamaz.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Adres</label>
+                        <input type="text"
+                               name="Address"
+                               value="@Model.Address"
+                               class="form-control"
+                               placeholder="Açık adres giriniz"
+                               required />
+                        <div class="invalid-feedback">
+                            Adres alanı boş bırakılamaz.
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="submit">Kaydet</button>
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Profile Photo Modal -->
+<div class="modal fade" id="photoModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <form asp-action="UpdateProfilePhoto"
+              method="post"
+              enctype="multipart/form-data"
+              class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Update Profile Photo</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <input type="file"
+                       name="photo"
+                       class="form-control"
+                       accept="image/*"
+                       required />
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Upload</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    Cancel
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>

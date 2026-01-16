@@ -2,6 +2,7 @@
 using DocumentFormat.OpenXml.Bibliography;
 using ExpenseFlow.Business.Abstract;
 using ExpenseFlow.Business.Services;
+using ExpenseFlow.Core.ViewModels;
 using ExpenseFlow.Entity;
 using ExpenseFlow.WebUI.Hubs;
 using Microsoft.AspNetCore.Authorization;
@@ -24,9 +25,10 @@ namespace ExpenseFlow.WebUI.Controllers
         private readonly INotificationService _notificationService;
         private readonly UserManager<AppUser> _userManager;
         private IReportService _reportService;
+        private readonly IAccountantService _accountantService;
 
 
-        public AccountantController(IExpenseService expenseService, ILogger<AccountantController> logger,IMapper mapper, IHubContext<NotificationHub> hubContext, INotificationService notificationService, UserManager<AppUser> userManager, IReportService reportService)
+        public AccountantController(IExpenseService expenseService, ILogger<AccountantController> logger,IMapper mapper, IHubContext<NotificationHub> hubContext, INotificationService notificationService, UserManager<AppUser> userManager, IReportService reportService, IAccountantService accountantService)
         {
             _expenseService = expenseService;
             _logger = logger;
@@ -35,6 +37,7 @@ namespace ExpenseFlow.WebUI.Controllers
             _notificationService = notificationService;
             _userManager = userManager;
             _reportService = reportService;
+            _accountantService = accountantService;
         }
 
 
@@ -194,6 +197,58 @@ namespace ExpenseFlow.WebUI.Controllers
                 fileName
             );
         }
+
+        public async Task<IActionResult> Profile()
+        {
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value);
+            var profile = await _accountantService.GetAccountantProfileAsync(userId);
+
+            return View(profile);
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateProfile(UpdateProfileViewModel model)
+        {
+            var userId = int.Parse(
+               User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value
+            );
+            await _accountantService.UpdateProfile(userId, model);
+            return RedirectToAction("Profile");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateProfilePhoto(IFormFile photo)
+        {
+            if (photo == null || photo.Length == 0)
+                return RedirectToAction("Profile");
+
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var uploadsFolder = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot/uploads/profile"
+            );
+
+            if (!Directory.Exists(uploadsFolder))
+                Directory.CreateDirectory(uploadsFolder);
+
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(photo.FileName)}";
+            var filePath = Path.Combine(uploadsFolder, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await photo.CopyToAsync(stream);
+            }
+
+            var photoUrl = "/uploads/profile/" + fileName;
+
+            await _accountantService.UpdateProfilePhotoAsync(userId, photoUrl);
+
+            return RedirectToAction("Profile");
+        }
+
+
 
 
 
