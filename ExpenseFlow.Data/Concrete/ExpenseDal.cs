@@ -1,4 +1,5 @@
-﻿using ExpenseFlow.Data.Abstract;
+﻿using ExpenseFlow.Core.ViewModels;
+using ExpenseFlow.Data.Abstract;
 using ExpenseFlow.Data.Context;
 using ExpenseFlow.Entity;
 using Microsoft.EntityFrameworkCore;
@@ -330,5 +331,29 @@ namespace ExpenseFlow.Data.Concrete
             return data.ToDictionary(x => x.CategoryName, x => x.Count);
         }
 
+        public async Task<List<ExpenseHistoryAdminViewModel>> GetExpenseHistoryForAdminAsync()
+        {
+            return await _context.Expenses
+                .Include(e => e.User)
+                    .ThenInclude(u => u.Department)
+                .Include(e => e.Category)
+                .Select(e => new ExpenseHistoryAdminViewModel
+                {
+                    ExpenseId = e.Id,
+                    UserFullName = e.User.FirstName + " " + e.User.LastName,
+                    DepartmentName = e.User.Department.Name,
+                    CategoryName = e.Category.Name,
+                    Amount = e.Amount,
+                    Status = e.Status,
+                    PaymentStatus = e.PaymentStatus,
+                    ExpenseDate = e.Date,
+                    ReceiptImagePath = e.ReceiptImage
+                })
+                .OrderByDescending(x => x.ExpenseDate)
+                .ToListAsync();
+        }
+
+
     }
 }
+
