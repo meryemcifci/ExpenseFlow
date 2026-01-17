@@ -1,4 +1,5 @@
-﻿using ExpenseFlow.WebUI.Models;
+﻿using ExpenseFlow.Business.Abstract;
+using ExpenseFlow.WebUI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -10,15 +11,22 @@ namespace ExpenseFlow.WebUI.Areas.Admin.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IExpenseService _expenseService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IExpenseService expenseService)
         {
             _logger = logger;
+            _expenseService = expenseService;
         }
 
         public IActionResult Index()
         {
             return View();
+        }
+        public async Task<IActionResult> ExpenseHistory()
+        {
+            var expenses = await _expenseService.GetExpenseHistoryForAdminAsync();
+            return View(expenses);
         }
 
         public IActionResult Privacy()

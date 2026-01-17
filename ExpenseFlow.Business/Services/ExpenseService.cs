@@ -1,4 +1,5 @@
-﻿using ExpenseFlow.Business.Abstract;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using ExpenseFlow.Business.Abstract;
 using ExpenseFlow.Core.ViewModels;
 using ExpenseFlow.Data.Abstract;
 using ExpenseFlow.Data.Concrete;
@@ -167,6 +168,10 @@ namespace ExpenseFlow.Business.Services
             return await _expenseDal.GetExpenseCountsByCategoryForAllAsync();
         }
 
+        public Task<List<ExpenseHistoryAdminViewModel>> GetExpenseHistoryForAdminAsync()
+        {
+            return _expenseDal.GetExpenseHistoryForAdminAsync();
+        }
     }
 
 

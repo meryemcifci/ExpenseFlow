@@ -1,0 +1,114 @@
+﻿@using ExpenseFlow.Entity
+@model List<ExpenseFlow.Core.ViewModels.ExpenseHistoryAdminViewModel>
+
+
+@{
+    ViewData["Title"] = "Expense History";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Expense History</h1>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+              Tüm Masraflar
+            </h6>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" width="100%">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Kullanıcı</th>
+                            <th>Departman</th>
+                            <th>Kategori</th>
+                            <th>Tutar</th>
+                            <th>Masraf Durumu</th>
+                            <th>Ödeme Durumu</th>
+                            <th>Tarih</th>
+                            <th>Fiş</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.UserFullName</td>
+                                    <td>@item.DepartmentName</td>
+                                    <td>@item.CategoryName</td>
+                                    <td>@item.Amount ₺</td>
+
+                                    <!-- EXPENSE STATUS -->
+                                    <td>
+                                        @{
+                                            var expenseBadge = item.Status switch
+                                            {
+                                                ExpenseStatus.Approved => "badge-info",
+                                                ExpenseStatus.Pending => "badge-warning",
+                                                ExpenseStatus.Rejected => "badge-danger",
+                                                _ => "badge-secondary"
+                                            };
+                                        }
+                                        <span class="badge @expenseBadge">
+                                            @item.Status
+                                        </span>
+                                    </td>
+
+                                    <!-- PAYMENT STATUS -->
+                                    <td>
+                                        @{
+                                            var paymentBadge = item.PaymentStatus switch
+                                            {
+                                                PaymentStatus.Paid => "badge-success",
+                                                PaymentStatus.Pending => "badge-secondary",
+                                                _ => "badge-dark"
+                                            };
+                                        }
+                                        <span class="badge @paymentBadge">
+                                            @item.PaymentStatus
+                                        </span>
+                                    </td>
+
+                                    <td>@item.ExpenseDate.ToString("dd.MM.yyyy")</td>
+
+                                    <td class="text-center">
+                                        @if (!string.IsNullOrEmpty(item.ReceiptImagePath))
+                                        {
+                                            <a href="@item.ReceiptImagePath"
+                                               target="_blank"
+                                               class="btn btn-sm btn-primary">
+                                                Görüntüle
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">—</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="9" class="text-center text-muted">
+                                    Kayıt bulunamadı.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

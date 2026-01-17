@@ -24,5 +24,7 @@ namespace ExpenseFlow.Entity
 
         // Bir çalışanın birden çok masrafı olabilir.
         public List<Expense> Expenses { get; set; }
+
+
     }
 }

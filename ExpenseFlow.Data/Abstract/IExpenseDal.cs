@@ -1,4 +1,5 @@
-﻿using ExpenseFlow.Entity;
+﻿using ExpenseFlow.Core.ViewModels;
+using ExpenseFlow.Entity;
 
 namespace ExpenseFlow.Data.Abstract
 {
@@ -44,6 +45,10 @@ namespace ExpenseFlow.Data.Abstract
         //accountant için :
 
         Task<Dictionary<string, int>> GetExpenseCountsByCategoryForAllAsync();
+
+
+        Task<List<ExpenseHistoryAdminViewModel>> GetExpenseHistoryForAdminAsync();
+
 
 
     }

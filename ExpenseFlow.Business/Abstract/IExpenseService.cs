@@ -46,5 +46,9 @@ namespace ExpenseFlow.Business.Abstract
 
 
         Task<Dictionary<string, int>> GetExpenseCountsByCategoryAsync();
+
+
+        Task<List<ExpenseHistoryAdminViewModel>> GetExpenseHistoryForAdminAsync();
+
     }
 }
